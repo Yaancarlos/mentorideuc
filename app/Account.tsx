@@ -49,10 +49,10 @@ export default function Account({ session }: { session: Session }) {
         role: string
         avatar_url: string
     }) {
-        const roles = ["admin", "student", "tutor"];
+        const roles = ["admin", "(student)", "(tutor)"];
 
         if (!roles.includes(role.toLowerCase())) {
-            Alert.alert("Los roles deben ser: admin, student, tutor");
+            Alert.alert("Los roles deben ser: (admin), (student), (tutor)");
             return;
         }
 

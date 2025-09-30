@@ -1,0 +1,30 @@
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import Dashboard from "./index";
+import AdminUsers from "./users";
+import {Ionicons} from "@expo/vector-icons";
+
+const Tab = createBottomTabNavigator();
+
+export default function AdminTabs() {
+    return (
+        <Tab.Navigator
+            screenOptions={({ route }) => ({
+                tabBarIcon: ({ focused, color, size }) => {
+                    let iconName: keyof typeof Ionicons.glyphMap;
+
+                    if (route.name === 'Dashboard') {
+                        iconName = focused ? 'home' : 'home-outline';
+                    } else if (route.name === 'Users') {
+                        iconName = focused ? 'people' : 'people-outline';
+                    }
+
+                    // @ts-ignore
+                    return <Ionicons name={iconName} size={size} color={color} />;
+                },
+            })}
+        >
+            <Tab.Screen name="Dashboard" component={Dashboard} />
+            <Tab.Screen name="Users" component={AdminUsers} />
+        </Tab.Navigator>
+    );
+}
