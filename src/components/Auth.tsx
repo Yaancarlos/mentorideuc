@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Alert, View, AppState } from 'react-native'
 import { supabase } from '@/lib/supabase'
+import {UserRole} from "@/src/types/auth";
 
 // Tells Supabase Auth to continuously refresh the session automatically if
 // the app is in the foreground. When this is added, you will continue to receive
@@ -48,8 +49,8 @@ export default function useAuth() {
             options: {
                 data: {
                     // Change this shit
-                    name: 'Diana',
-                    role: 'admin',
+                    name: 'Ricardo',
+                    role: 'tutor',
                 }
             }
         });

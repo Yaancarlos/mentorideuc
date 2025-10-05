@@ -69,3 +69,16 @@ export function useProfile(userId?: string) {
 
     return { profile, loading, error };
 }
+
+/* Current User Hook */
+export function useCurrentUser() {
+    const { session, loading: sessionLoading } = useSession();
+    const { profile, loading: profileLoading, error } = useProfile(session?.user?.id);
+
+    return {
+        session,
+        profile,
+        loading: sessionLoading || profileLoading,
+        error
+    };
+}

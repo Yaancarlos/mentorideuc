@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Dashboard from "./index";
 import StudentSessions from "./sessions";
 import {Ionicons} from "@expo/vector-icons";
+import BookingScreen from "@/app/(student)/BookingScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -16,6 +17,8 @@ export default function StudentTabs() {
                         iconName = focused ? 'home' : 'home-outline';
                     } else if (route.name === 'Sessions') {
                         iconName = focused ? 'people' : 'people-outline';
+                    } else if (route.name === 'Booking') {
+                        iconName = focused ? 'book' : 'book-outline';
                     }
 
                     // @ts-ignore
@@ -25,6 +28,7 @@ export default function StudentTabs() {
         >
             <Tab.Screen name="Dashboard" component={Dashboard} />
             <Tab.Screen name="Sessions" component={StudentSessions} />
+            <Tab.Screen name="Booking" component={BookingScreen} />
         </Tab.Navigator>
     );
 }

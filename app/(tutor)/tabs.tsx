@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Dashboard from "./index";
 import TutorSessions from "./sessions";
 import {Ionicons} from "@expo/vector-icons";
+import MyCalendarScreen from "@/app/(tutor)/CalendarScreen";
 
 const Tab = createBottomTabNavigator();
 
@@ -16,6 +17,8 @@ export default function TutorTabs() {
                         iconName = focused ? 'home' : 'home-outline';
                     } else if (route.name === 'Sessions') {
                         iconName = focused ? 'people' : 'people-outline';
+                    } else if (route.name == 'Calendario') {
+                        iconName = focused ? 'book' : 'book-outline';
                     }
 
                     // @ts-ignore
@@ -25,6 +28,7 @@ export default function TutorTabs() {
         >
             <Tab.Screen name="Dashboard" component={Dashboard} />
             <Tab.Screen name="Sessions" component={TutorSessions} />
+            <Tab.Screen name="Calendario" component={MyCalendarScreen} />
         </Tab.Navigator>
     );
 }

@@ -9,3 +9,16 @@ export interface Profile {
     updated_at: string;
     avatar_url: string;
 }
+
+export enum EventStatus {
+    AVAILABLE = 'available',
+    BOOKED = 'booked',
+    CANCELED = 'canceled'
+}
+
+export enum RepositoryStatus {
+    SUBMITTED = 'submitted',
+    REVIEWED = 'reviewed',
+    APPROVED = 'approved',
+    REJECTED = 'rejected'
+}

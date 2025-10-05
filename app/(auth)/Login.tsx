@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import useAuth from '@/src/components/Auth';
-import {Text, TextInput, TouchableOpacity, View} from "react-native";
+import {ActivityIndicator, Text, TextInput, TouchableOpacity, View} from "react-native";
 
 export default function LoginScreen () {
     const [password, setPassword] = useState('');
@@ -47,16 +47,19 @@ export default function LoginScreen () {
                     disabled={loading}
                 >
                     <Text className="text-white text-center font-semibold text-lg">
-                        {loading ? "Cargando..." : "Sign In"}
+                        {loading ?
+                            (<View className="flex-1 justify-center items-center">
+                                <ActivityIndicator color="#FFFFFF" />
+                            </View>) :
+                            "Sign In"}
                     </Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    className="bg-blue-600 rounded-lg p-4"
+                    className="bg-gray-400 rounded-lg p-4"
                     onPress={() => handleSignUp()}
-                    disabled={true}
                 >
                     <Text className="text-white text-center font-semibold text-lg">
-                        {loading ? "Cargando..." : "Sign Up"}
+                        {loading ? (<ActivityIndicator color="#fff" />) : "Sign Up"}
                     </Text>
                 </TouchableOpacity>
             </View>
