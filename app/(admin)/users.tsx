@@ -7,7 +7,7 @@ export default function AdminUsers() {
         <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text>Admin Users</Text>
             <TouchableOpacity
-                className="bg-blue-600 rounded-lg p-4"
+                className="bg-blue-600 mt-8 rounded-lg p-4"
                 onPress={() => supabase.auth.signOut()}
             >
                 <Text className="text-white text-center font-semibold text-lg">Sign Out</Text>
