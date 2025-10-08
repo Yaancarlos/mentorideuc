@@ -11,6 +11,7 @@ App para gestionar y dar seguimiento a tutorías de trabajos de grado y encuentr
 - Programación de tutorías entre estudiantes y directores
 - Gestión documental con aprobación/corrección de documentos
 - Sistema de retroalimentación integrado
+- Repositorio de documentación y retroalimentacion en cada sesion o encuentro
 
 ---
 
