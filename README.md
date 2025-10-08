@@ -35,7 +35,7 @@ App para gestionar y dar seguimiento a tutorías de trabajos de grado y encuentr
 ## Documentación
 
 Puedes descargar la documentación del proyecto aquí:  
-[📄 Descargar informe (.docx)](./docs/ANTEPROYECTO%20APLICACION%20DE%20CONTROL%20Y%20SEGUIMIENTO%20DE%20TUTORIAS%20V4.docx)
+[📄 Descargar informe (.docx)](https://github.com/Yaancarlos/mentorideuc/raw/refs/heads/main/docs/ANTEPROYECTO%20APLICACION%20DE%20CONTROL%20Y%20SEGUIMIENTO%20DE%20TUTORIAS%20V4.docx)
 
 <p>
   <a href="./docs/ANTEPROYECTO%20APLICACION%20DE%20CONTROL%20Y%20SEGUIMIENTO%20DE%20TUTORIAS%20V4.docx" 
