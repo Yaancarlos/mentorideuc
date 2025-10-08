@@ -32,6 +32,19 @@ App para gestionar y dar seguimiento a tutorías de trabajos de grado y encuentr
 ### Diagrama de Casos de uso
 ![Diagrama de Secuencia](./assets/images/caso%20de%20uso.jpeg)
 
+## Documentación
+
+Puedes descargar la documentación del proyecto aquí:  
+[📄 Descargar informe (.docx)](./docs/ANTEPROYECTO%20APLICACION%20DE%20CONTROL%20Y%20SEGUIMIENTO%20DE%20TUTORIAS%20V4.docx)
+
+<p>
+  <a href="./docs/ANTEPROYECTO%20APLICACION%20DE%20CONTROL%20Y%20SEGUIMIENTO%20DE%20TUTORIAS%20V4.docx" 
+     target="_blank" 
+     style="background-color:#0078d7; color:white; padding:10px 18px; border-radius:6px; text-decoration:none; font-weight:bold;">
+    Descargar Informe (.docx)
+  </a>
+</p>
+
 ## Instalación
 
 ```bash
