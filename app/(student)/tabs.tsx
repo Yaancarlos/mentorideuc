@@ -1,8 +1,8 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Dashboard from "./index";
-import StudentSessions from "./sessions";
 import {Ionicons} from "@expo/vector-icons";
 import BookingScreen from "@/app/(student)/BookingScreen";
+import SessionsListScreen from "@/app/(student)/sessions/index";
 
 const Tab = createBottomTabNavigator();
 
@@ -27,7 +27,7 @@ export default function StudentTabs() {
             })}
         >
             <Tab.Screen name="Dashboard" component={Dashboard} />
-            <Tab.Screen name="Sessions" component={StudentSessions} />
+            <Tab.Screen name="Sessions" component={SessionsListScreen} />
             <Tab.Screen name="Booking" component={BookingScreen} />
         </Tab.Navigator>
     );

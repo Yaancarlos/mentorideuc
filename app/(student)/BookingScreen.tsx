@@ -65,8 +65,12 @@ export default function BookingScreen() {
                 return;
             }
 
-            await bookEvent(eventId, profile.id, title, description);
+            const newTitle = title.trim();
+            const newDescription = description.trim();
+
+            await bookEvent(eventId, profile.id, newTitle, newDescription);
             Alert.alert("Éxito", "La sesión ha sido guardada");
+
             // Reset form
             setTitle("");
             setDescription("");

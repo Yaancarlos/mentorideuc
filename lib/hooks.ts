@@ -6,11 +6,22 @@ import {supabase} from "@/lib/supabase";
 export function useSession() {
     const [session, setSession] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<any>(null);
 
     useEffect(() => {
         // Get current session
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setSession(session);
+        supabase.auth.getSession().then(({ data: { session }, error }) => {
+            if (error) {
+                console.error("Session error:", error);
+                setError(error);
+
+                if (error.message.includes('Invalid Refresh Token')) {
+                    setSession(null);
+                }
+            } else {
+                setSession(session);
+                setError(null);
+            }
             setLoading(false);
         });
 
@@ -26,7 +37,7 @@ export function useSession() {
         };
     }, []);
 
-    return { session, loading };
+    return { session, loading, error };
 }
 
 // --- Profile hook ---

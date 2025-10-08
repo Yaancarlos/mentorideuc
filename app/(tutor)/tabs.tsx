@@ -1,6 +1,6 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Dashboard from "./index";
-import TutorSessions from "./sessions";
+import SessionsListScreenTutor from "@/app/(tutor)/sessions/index";
 import {Ionicons} from "@expo/vector-icons";
 import MyCalendarScreen from "@/app/(tutor)/CalendarScreen";
 
@@ -27,7 +27,7 @@ export default function TutorTabs() {
             })}
         >
             <Tab.Screen name="Dashboard" component={Dashboard} />
-            <Tab.Screen name="Sessions" component={TutorSessions} />
+            <Tab.Screen name="Sessions" component={SessionsListScreenTutor} />
             <Tab.Screen name="Calendario" component={MyCalendarScreen} />
         </Tab.Navigator>
     );

@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, ActivityIndicator, Text } from 'react-native';
+import React, {useEffect} from 'react';
+import {View, ActivityIndicator, Text, Alert} from 'react-native';
 import {useSession,  useProfile} from "@/lib/hooks";
 
 /* Screens */
@@ -8,10 +8,22 @@ import LoginScreen from "@/app/(auth)/Login";
 import AdminTabs from "@/app/(admin)/tabs";
 import TutorTabs from "@/app/(tutor)/tabs";
 import StudentTabs from "@/app/(student)/tabs";
+import {supabase} from "@/lib/supabase";
 
 export default function AuthController() {
-    const { session, loading: sessionLoading } = useSession();
+    const { session, loading: sessionLoading, error: sessionError } = useSession();
     const { profile, loading: profileLoading, error: profileError } = useProfile(session?.user?.id);
+
+    useEffect(() => {
+        if (sessionError) {
+            console.error("Auth error:", sessionError);
+
+            if (sessionError.message.includes('Invalid Refresh Token')) {
+                supabase.auth.signOut();
+                Alert.alert("Session Expired", "Please sign in again");
+            }
+        }
+    }, [sessionError]);
 
     const loading = sessionLoading || (session && profileLoading);
 
