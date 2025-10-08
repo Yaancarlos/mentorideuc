@@ -4,6 +4,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { bookEvent, getTutorAvailability } from "@/lib/api/caledar";
 import { useCurrentUser } from "@/lib/hooks";
 import { supabase } from "@/lib/supabase";
+import {EventStatus} from "@/src/types/auth";
 
 export default function BookingScreen() {
     const [loading, setLoading] = useState(false);
