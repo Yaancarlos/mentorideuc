@@ -15,9 +15,7 @@ App para gestionar y dar seguimiento a tutorías de trabajos de grado y encuentr
 ---
 
 ## Diseño
-![Diseño en Figma](./assets/images/figma-card.png)
-
-![Vista previa del diseño](https://github.com/user-attachments/assets/8359717f-c15f-4df0-a18a-46e2a4b9da96)
+[![Diseño en Figma](./assets/images/figma-card-ex.png)](https://www.figma.com/design/PUdRjegJE8jWPI3ACZAH5z/Mentoride-Tutor-App?node-id=26-2&t=G8SwWGmgTJUKRv5S-1)
 
 ---
 
