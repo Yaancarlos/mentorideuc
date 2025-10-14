@@ -8,6 +8,7 @@ import {cancelEvent} from "@/lib/api/caledar";
 import {formatDate, formatDateTime} from "@/src/utils/date";
 import {getSessionColor} from "@/src/utils/tagColors";
 import SearchFilter from "@/src/components/Search";
+import SessionCard from "@/src/components/SessionCard";
 
 export default function SessionsListScreenTutor() {
     const { profile, loading: loadingUser } = useCurrentUser();
@@ -28,14 +29,14 @@ export default function SessionsListScreenTutor() {
             const { data: events, error: eventsError } = await supabase
                 .from("calendar_events")
                 .select(`
-                id,
-                title,
-                description,
-                status,  
-                start_time,
-                end_time,
-                student:profiles!calendar_events_student_id_fkey(name)
-            `)
+                    id,
+                    title,
+                    description,
+                    status,  
+                    start_time,
+                    end_time,
+                    student:profiles!calendar_events_student_id_fkey(name)
+                `)
                 .eq("tutor_id", profile?.id as string)
                 .order("created_at", { ascending: false });
 
@@ -62,10 +63,6 @@ export default function SessionsListScreenTutor() {
         }
     }
 
-    function navigateToRepository(repositoryId: string) {
-        router.push(`/(tutor)/sessions/${repositoryId}`);
-    }
-
     async function handleDeleteSession(eventId: string, profile: string) {
         try {
             setLoading(true);
@@ -81,11 +78,35 @@ export default function SessionsListScreenTutor() {
         }
     }
 
+    const handleCardPress = (item: any) => {
+        if (item.status === 'booked' && item.repository?.id) {
+            router.push(`/(tutor)/sessions/${item.repository.id}`);
+        } else {
+            Alert.alert("Información", `Esta sesión está ${item.status}`);
+        }
+    };
+
+    const handleLongPress = (item: any) => {
+        Alert.alert(
+            "Opciones de Sesión",
+            `¿Qué quieres hacer con "${item.title}"?`,
+            [
+                { text: "Salir", style: "cancel" },
+                { text: "Ver Detalles", onPress: () => {
+                        if (item.status === 'booked' && item.repository?.id) {
+                            handleCardPress(item);
+                        }
+                    }},
+                { text: "Cancelar Sesión", style: "destructive", onPress: () => {handleDeleteSession(item?.id, profile?.id as string)} },
+            ]
+        );
+    }
+
     if (loading || loadingUser) {
         return (
             <View className="flex-1 justify-center items-center">
                 <ActivityIndicator size="large" color="#3b82f6" />
-                <Text className="mt-2 text-gray-500">Cargando agenda...</Text>
+                <Text className="mt-2 text-gray-500">Cargando...</Text>
             </View>
         );
     }
@@ -111,99 +132,14 @@ export default function SessionsListScreenTutor() {
                 }}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                    <TouchableOpacity
-                        className={`bg-white p-4 rounded-lg mb-3 border border-gray-200`}
-                        onPress={() => {
-                            if (item.status === 'booked' && item.repository?.id) {
-                                navigateToRepository(item.repository.id);
-                            } else {
-                                Alert.alert(
-                                    "Información",
-                                    item.status === 'available'
-                                        ? "Esta sesión está disponible para ser reservada"
-                                        : "Esta sesión no tiene repositorio asociado"
-                                );
-                            }
-                        }}
-                        onLongPress={() => {
-                            Alert.alert(
-                                "Opciones de Sesión",
-                                `¿Qué quieres hacer con "${item.title}"?`,
-                                [
-                                    { text: "Salir", style: "cancel" },
-                                    { text: "Ver Detalles", onPress: () => navigateToRepository(item.repository?.id) },
-                                    { text: "Cancelar Sesión", style: "destructive", onPress: () => handleDeleteSession(item.id, profile?.id as string) },
-                                ]
-                            );
-                        }}
-                        delayLongPress={500}
-                    >
-                        <Text className="font-semibold text-2xl">
-                            {item?.title || "Session"}
-                        </Text>
-
-                        {item.status === 'booked' && item.student?.name && (
-                            <View className="flex-row my-3 items-center">
-                                <Ionicons name="person-outline" size={17} color="#6B7280" />
-                                <Text className="text-gray-600 ml-2">
-                                    Estudiante: {item.student.name}
-                                </Text>
-                            </View>
-                        )}
-
-                        {item.status === 'available' && (
-                            <View className="flex-row my-3 items-center bg-blue-50 rounded-lg p-2">
-                                <Ionicons name="information-circle-outline" size={17} color="#3B82F6" />
-                                <Text className="text-blue-600 ml-2 text-sm">
-                                    Sesión disponible para reservar
-                                </Text>
-                            </View>
-                        )}
-                        {item.status === 'canceled' && (
-                            <View className="flex-row my-3 items-center bg-red-50 rounded-lg p-2">
-                                <Ionicons name="close-circle-outline" size={17} color="#EF4444" />
-                                <Text className="text-red-600 ml-2 text-sm">
-                                    Sesión cancelada
-                                </Text>
-                            </View>
-                        )}
-                        <Text className="text-gray-500 text-sm">
-                            {item?.description || "No descripción"}
-                        </Text>
-
-                        <View className="flex flex-row justify-end gap-3 my-3 items-center">
-                            <View className="flex flex-row items-center gap-2">
-                                <Ionicons name="calendar-outline" size={16} color="#6B7280" />
-                                <Text className="text-gray-600">
-                                    {item?.start_time ?
-                                        formatDate(item?.start_time, true) :
-                                        "No date"
-                                    }
-                                </Text>
-                            </View>
-                            <View className="flex flex-row items-center gap-2">
-                                <Ionicons name="time-outline" size={16} color="#6B7280" />
-                                <Text className="text-gray-600">
-                                    {(item?.start_time && item?.end_time) ?
-                                        formatDateTime(item?.start_time, item?.end_time) :
-                                        "No date"
-                                    }
-                                </Text>
-                            </View>
-                        </View>
-
-                        <View className={`flex flex-row items-center ${
-                            item.status === "canceled" ? "justify-end" : "justify-end"
-                        }`}>
-                            {item?.status && (
-                                <View className={`rounded-md px-2 py-1 ${getSessionColor(item?.status)}`}>
-                                    <Text className="text-white text-xs">
-                                        {item?.status}
-                                    </Text>
-                                </View>
-                            )}
-                        </View>
-                    </TouchableOpacity>
+                    <SessionCard
+                        item={item}
+                        onPress={handleCardPress}
+                        onLongPress={handleLongPress}
+                        currentUserId={profile?.id}
+                        showStudentInfo={true}
+                        variant="default"
+                    />
                 )}
                 ListEmptyComponent={
                     <View className="flex-1 items-center justify-center py-10 px-6">

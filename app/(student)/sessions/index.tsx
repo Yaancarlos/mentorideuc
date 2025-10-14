@@ -7,6 +7,8 @@ import {useCurrentUser} from "@/lib/hooks";
 import {formatDateTime} from "@/src/utils/date";
 import SearchFilter from "@/src/components/Search";
 import Entypo from "@expo/vector-icons/Entypo";
+import SessionCard from "@/src/components/SessionCard";
+import {cancelEvent} from "@/lib/api/caledar";
 
 export default function SessionsListScreen() {
     const { profile } = useCurrentUser();
@@ -24,22 +26,37 @@ export default function SessionsListScreen() {
         try {
             setLoading(true);
 
-            const { data, error } = await supabase
-                .from("repository")
+            const { data: events, error: eventsError } = await supabase
+                .from("calendar_events")
                 .select(`
-                          id,
-                          title,
-                          description,
-                          status,  
-                          student:profiles!repository_student_id_fkey(name),
-                          tutor:profiles!repository_tutor_id_fkey(name),
-                          calendar:calendar_events!repository_booking_id_fkey(start_time, end_time, status)
-                        `)
+                    id,
+                    title,
+                    description,
+                    status,  
+                    start_time,
+                    end_time,
+                    student:profiles!calendar_events_student_id_fkey(name)
+                `)
                 .eq("student_id", profile?.id as string)
                 .order("created_at", { ascending: false });
 
-                if (error) console.error(error);
-                setRepositories(data || [])
+            if (eventsError) throw eventsError;
+
+            const eventIds = events.map(event => event.id);
+            const { data: repositories, error: reposError } = await supabase
+                .from("repository")
+                .select("id, status, booking_id")
+                .in("booking_id", eventIds);
+
+            if (reposError) throw reposError;
+
+            const eventsWithRepos = events.map(event => ({
+                ...event,
+                repository: repositories?.find(repo => repo.booking_id === event.id) || []
+            }));
+
+            setRepositories(eventsWithRepos || []);
+            console.log(eventsWithRepos);
         } catch (error: any) {
             Alert.alert("Error", error.message);
         } finally {
@@ -47,8 +64,43 @@ export default function SessionsListScreen() {
         }
     }
 
-    function navigateToRepository(repositoryId: string) {
-        router.push(`/(student)/sessions/${repositoryId}`);
+    async function handleDeleteSession(eventId: string, profile: string) {
+        try {
+            setLoading(true);
+
+            await cancelEvent(eventId, profile);
+
+            Alert.alert("Sesion eliminada");
+            loadRepositories();
+        } catch (error: any) {
+            console.log(error);
+        } finally {
+            setLoading(false);
+        }
+    }
+
+    const handleCardPress = (item: any) => {
+        if (item.status === 'booked' && item.repository?.id) {
+            router.push(`/(student)/sessions/${item.repository.id}`);
+        } else {
+            Alert.alert("Información", `Esta sesión está ${item.status}`);
+        }
+    };
+
+    const handleLongPress = (item: any) => {
+        Alert.alert(
+            "Opciones de Sesión",
+            `¿Qué quieres hacer con "${item.title}"?`,
+            [
+                { text: "Salir", style: "cancel" },
+                { text: "Ver Detalles", onPress: () => {
+                        if (item.status === 'booked' && item.repository?.id) {
+                            handleCardPress(item);
+                        }
+                    }},
+                { text: "Cancelar Sesión", style: "destructive", onPress: () => {handleDeleteSession(item?.id, profile?.id as string)} },
+            ]
+        );
     }
 
     if (loading) {
@@ -81,50 +133,14 @@ export default function SessionsListScreen() {
                 data={filteredRepositories}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                    <TouchableOpacity
-                        className="bg-white p-4 rounded-lg mb-3 border border-gray-200"
-                        onPress={() => navigateToRepository(item.id)}
-                        onLongPress={() => {}}
-                        delayLongPress={500}
-                    >
-                        <Text className="font-semibold text-2xl">
-                            {item?.title || "Session"}
-                        </Text>
-                        <Text className="text-gray-500 text-sm">
-                            Tutor: {`Ing. ${item?.tutor?.name}` || "Unknown"}
-                        </Text>
-                        <Text className="text-gray-500 text-sm mt-2 mb-5">
-                            {item?.description || "No descripcion"}
-                        </Text>
-                        <View className="flex flex-row gap-3 items-center">
-                            <View className="flex flex-row items-center gap-2 ">
-                                <Ionicons name="calendar-outline" size={16} color="#6B7280" />
-                                <Text className="text-gray-600">
-                                    {item?.calendar?.start_time ?
-                                        new Date(item?.calendar?.start_time).toLocaleString().split(', ')[0] :
-                                        "No date"
-                                    }
-                                </Text>
-                            </View>
-                            <View className="flex flex-row items-center gap-2 ">
-                                <Ionicons name="time-outline" size={16} color="#6B7280" />
-                                <Text className="text-gray-600">
-                                    {(item?.calendar?.start_time && item?.calendar?.end_time) ?
-                                        formatDateTime(item?.calendar?.start_time, item?.calendar?.end_time) :
-                                        "No date"
-                                    }
-                                </Text>
-                            </View>
-                        </View>
-                        <Text className={`text-sm mt-1 ${
-                            item.status === 'submitted' ? 'text-blue-600' :
-                                item.status === 'reviewed' ? 'text-yellow-600' :
-                                    item.status === 'approved' ? 'text-green-600' :
-                                        'text-red-600'
-                        }`}>
-                            Status: {item.status}
-                        </Text>
-                    </TouchableOpacity>
+                    <SessionCard
+                        item={item}
+                        onPress={handleCardPress}
+                        onLongPress={handleLongPress}
+                        currentUserId={profile?.id}
+                        showStudentInfo={true}
+                        variant="default"
+                    />
                 )}
                 ListEmptyComponent={
                     <View className="flex-1 items-center justify-center py-10 px-6">
