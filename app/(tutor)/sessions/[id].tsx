@@ -20,9 +20,6 @@ export default function RepositoryDetailTutorScreen() {
     const [uploading, setUploading] = useState(false);
     const [status, setStatus] = useState("");
 
-    console.warn(id)
-    console.warn(profile)
-
     useEffect(() => {
         if (id) {
             loadRepository();

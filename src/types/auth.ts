@@ -11,12 +11,15 @@ export interface Profile {
 }
 
 export enum EventStatus {
+    ALL = 'all',
     AVAILABLE = 'available',
     BOOKED = 'booked',
-    CANCELED = 'canceled'
+    CANCELED = 'canceled',
+    PENDING = 'pending'
 }
 
 export enum RepositoryStatus {
+    ALL = 'all',
     SUBMITTED = 'submitted',
     REVIEWED = 'reviewed',
     APPROVED = 'approved',

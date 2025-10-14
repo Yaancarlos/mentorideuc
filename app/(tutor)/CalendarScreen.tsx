@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from "react";
-import {View, Text, Button, FlatList, ActivityIndicator, Alert, TextInput, TouchableOpacity} from "react-native";
-import { createEvent, cancelEvent } from "@/lib/api/caledar";
-import { supabase } from "@/lib/supabase";
-import { useCurrentUser } from "@/lib/hooks";
+import React, {useEffect, useState} from "react";
+import {ActivityIndicator, Alert, Button, FlatList, Text, TextInput, TouchableOpacity, View} from "react-native";
+import {cancelEvent, createEvent} from "@/lib/api/caledar";
+import {supabase} from "@/lib/supabase";
+import {useCurrentUser} from "@/lib/hooks";
 import {EventStatus} from "@/src/types/auth";
+import {Ionicons} from "@expo/vector-icons";
+import Entypo from "@expo/vector-icons/Entypo";
+import {formatDate, formatDateTime} from "@/src/utils/date";
 
 export default function MyCalendarScreen() {
     const [loading, setLoading] = useState(false);
@@ -19,6 +22,7 @@ export default function MyCalendarScreen() {
                 .from("calendar_events")
                 .select("*")
                 .eq("tutor_id", profile?.id)
+                .eq("status", EventStatus.AVAILABLE)
                 .order("start_time");
 
             if (error) throw error;
@@ -38,7 +42,6 @@ export default function MyCalendarScreen() {
 
     async function addEvent() {
         try {
-
             if (!profile?.id) {
                 Alert.alert("Error", "Profile not loaded");
                 return;
@@ -75,7 +78,7 @@ export default function MyCalendarScreen() {
         }
     }
 
-    async function handleCancel(eventId: string) {
+    async function handleCancel(eventId: string, profileId: string) {
         try {
             if (!profile?.id) {
                 Alert.alert("Error", "Profile not loaded");
@@ -83,7 +86,7 @@ export default function MyCalendarScreen() {
             }
 
             setLoading(true);
-            await cancelEvent(eventId, profile.id);
+            await cancelEvent(eventId, profileId);
             Alert.alert("Éxito", "Evento cancelado");
             loadEvents();
         } catch (error: any) {
@@ -131,27 +134,53 @@ export default function MyCalendarScreen() {
             )}
             <FlatList
                 data={events}
+                contentContainerStyle={{
+                    flexGrow: 1,
+                }}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
-                    <View className="mb-3 p-3 border border-solid border-gray-300 rounded">
-                        <Text>
-                            {new Date(item.start_time).toLocaleString()} - {new Date(item.end_time).toLocaleString()}
-                        </Text>
-                        <Text>Estado: {item.status}</Text>
-                        {item.status !== EventStatus.CANCELED && profile?.role === "tutor" && (
-                            <Button
-                                title="Cancelar"
-                                onPress={() => handleCancel(item.id)}
-                            />
-                        )}
-                    </View>
+                    <TouchableOpacity
+                        className={`bg-white p-4 rounded-lg mb-3 border flex-1 flex-row justify-between items-center border-gray-200`}
+                    >
+                        <View className="flex flex-col my-3 items-start">
+                            <View className="flex flex-row items-center gap-2">
+                                <Text className="text-gray-800 font-semibold text-lg">
+                                    {item?.start_time ?
+                                        formatDate(item?.start_time, true): ""
+                                    }
+                                </Text>
+                            </View>
+                            <View className="flex flex-row items-center gap-2">
+                                <Text className="text-gray-600">
+                                    {(item?.start_time && item?.end_time) ?
+                                        formatDateTime(item?.start_time, item?.end_time) : "Null"
+                                    }
+                                </Text>
+                            </View>
+                        </View>
+
+                        <View className="flex flex-col gap-1">
+                            <View className={`flex flex-row items-center justify-end`}>
+                                {item?.status && (
+                                    <Text className="text-gray-500 font-semibold text-xs">
+                                        {item?.status == EventStatus.AVAILABLE ? "Disponible" : "Null"}
+                                    </Text>
+                                )}
+                            </View>
+                            <TouchableOpacity
+                                className="bg-red-500 rounded-lg px-4 py-2"
+                                onPress={() => handleCancel(item.id, profile?.id as string)}
+                            >
+                                <Text className="font-semibold text-center text-base text-white">Cancelar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </TouchableOpacity>
                 )}
                 ListEmptyComponent={
-                    <Text className="text-center text-gray-500 mt-4">
-                        {profile?.role === "tutor"
-                            ? "No hay eventos programados"
-                            : "No tienes eventos reservados"}
-                    </Text>
+                    <View className="flex-1 items-center justify-center py-10 px-6">
+                        <Entypo name="emoji-sad" size={38} color="#9CA3AF" />
+                        <Text className="mt-3 text-gray-500">No tienes sesiones pendientes</Text>
+                    </View>
                 }
             />
         </View>

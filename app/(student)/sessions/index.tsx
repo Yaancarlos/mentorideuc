@@ -1,14 +1,17 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, FlatList, ActivityIndicator, Alert, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from "@/lib/supabase";
 import {useCurrentUser} from "@/lib/hooks";
-import {EventStatus} from "@/src/types/auth";
+import {formatDateTime} from "@/src/utils/date";
+import SearchFilter from "@/src/components/Search";
+import Entypo from "@expo/vector-icons/Entypo";
 
 export default function SessionsListScreen() {
     const { profile } = useCurrentUser();
     const [repositories, setRepositories] = useState<any[]>([]);
+    const [filteredRepositories, setFilteredRepositories] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
@@ -48,26 +51,11 @@ export default function SessionsListScreen() {
         router.push(`/(student)/sessions/${repositoryId}`);
     }
 
-    function formatTimeRange(startTime:string, endTime:string) {
-        const start = new Date(startTime);
-        const end = new Date(endTime);
-
-        const formatTime = (date:any) => {
-            return date.toLocaleTimeString('en-US', {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false
-            });
-        };
-
-        return `${formatTime(start)} - ${formatTime(end)}`;
-    }
-
     if (loading) {
         return (
             <View className="flex-1 justify-center items-center">
                 <ActivityIndicator size="large" color="#3b82f6" />
-                <Text className="mt-2 text-gray-500">Loading sessions...</Text>
+                <Text className="mt-2 text-gray-500">Cargando sesiones...</Text>
             </View>
         );
     }
@@ -75,9 +63,22 @@ export default function SessionsListScreen() {
     return (
         <View className="flex-1 p-5">
             <Text className="text-lg font-bold w-full text-center mb-4">Mis Tutorias</Text>
-
-            <FlatList
+            <SearchFilter
                 data={repositories}
+                onFilteredDataChange={setFilteredRepositories}
+                searchFields={["title", "description", "student.name"]}
+                filterConfig={{
+                    repositoryStatus: true,
+                    sessionStatus: true
+                }}
+                placeholder="Buscar sesiones..."
+                emptyMessage="No se encontraron sesiones"
+            />
+            <FlatList
+                contentContainerStyle={{
+                    flexGrow: 1,
+                }}
+                data={filteredRepositories}
                 keyExtractor={(item) => item.id}
                 renderItem={({ item }) => (
                     <TouchableOpacity
@@ -109,7 +110,7 @@ export default function SessionsListScreen() {
                                 <Ionicons name="time-outline" size={16} color="#6B7280" />
                                 <Text className="text-gray-600">
                                     {(item?.calendar?.start_time && item?.calendar?.end_time) ?
-                                        formatTimeRange(item?.calendar?.start_time, item?.calendar?.end_time) :
+                                        formatDateTime(item?.calendar?.start_time, item?.calendar?.end_time) :
                                         "No date"
                                     }
                                 </Text>
@@ -126,8 +127,9 @@ export default function SessionsListScreen() {
                     </TouchableOpacity>
                 )}
                 ListEmptyComponent={
-                    <View className="flex items-center justify-center py-10">
-                        <Text className="text-gray-500">No sessions found</Text>
+                    <View className="flex-1 items-center justify-center py-10 px-6">
+                        <Entypo name="emoji-sad" size={38} color="#9CA3AF" />
+                        <Text className="mt-3 text-gray-500">No se encontraron tutorias</Text>
                     </View>
                 }
             />

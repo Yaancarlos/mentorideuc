@@ -1,5 +1,5 @@
 import {supabase} from "@/lib/supabase";
-import {EventStatus} from "@/src/types/auth";
+import {EventStatus, RepositoryStatus} from "@/src/types/auth";
 
 // --------- Calls for Bookings ----------------------
 
@@ -18,8 +18,8 @@ export async function getTutorAvailability(tutorId: string) {
         .from("calendar_events")
         .select("*")
         .eq("tutor_id", tutorId)
-        .eq("status", "available")
-        .order("start_time");
+        .eq("status", EventStatus.AVAILABLE)
+        .order("start_time", {ascending: true});
 
     if (error) throw error;
     return data;
@@ -36,9 +36,63 @@ export async function createEvent(tutorId: string, startTime: string, endTime: s
         }])
         .select()
         .maybeSingle();
+
     if (error) throw error;
     return data;
 }
+
+export async function respondToBooking(eventId: string, accept: boolean) {
+    try {
+        const status = accept ? EventStatus.BOOKED : EventStatus.CANCELED;
+
+        const { data: updatedEvent, error } = await supabase
+            .from("calendar_events")
+            .update({ status })
+            .eq("id", eventId)
+            .eq("status", EventStatus.PENDING)
+            .select()
+            .maybeSingle();
+
+        if (error) throw error;
+
+        if (accept && updatedEvent) {
+            console.log("UPDATEDEVENT", updatedEvent);
+
+            const { data, error: repoError } = await supabase
+                .from("repository")
+                .insert({
+                    booking_id: eventId,
+                    student_id: updatedEvent.student_id,
+                    tutor_id: updatedEvent.tutor_id,
+                    title: updatedEvent.title || `Session ${new Date().toLocaleDateString()}`,
+                    description: updatedEvent.description || "",
+                    file_url: "",
+                    status: RepositoryStatus.SUBMITTED,
+                })
+                .select()
+                .maybeSingle();
+
+            if (repoError) throw repoError;
+        } else if (!accept) {
+            const { data, error: repoError } = await supabase
+                .from("calendar_events")
+                .update({ status })
+                .eq("id", eventId)
+                .eq("status", EventStatus.CANCELED)
+                .select()
+                .maybeSingle();
+
+            if (repoError) throw repoError;
+        }
+
+        return updatedEvent;
+    } catch (err: any) {
+        console.error("Tutor response error:", err);
+        throw err;
+    }
+}
+
+
 
 export async function bookEvent(eventId: string, studentId: string, title: string, description: string) {
     try {
@@ -46,7 +100,7 @@ export async function bookEvent(eventId: string, studentId: string, title: strin
             .from("calendar_events")
             .update({
                 student_id: studentId,
-                status: EventStatus.BOOKED,
+                status: EventStatus.PENDING,
                 title: title,
                 description: description,
             })
@@ -56,24 +110,7 @@ export async function bookEvent(eventId: string, studentId: string, title: strin
             .maybeSingle();
 
         if (bookError) throw bookError;
-
-        const { data: repoData, error: repoError } = await supabase
-            .from('repository')
-            .insert({
-                booking_id: eventId,
-                student_id: studentId,
-                tutor_id: bookData.tutor_id,
-                title: title || `Session ${new Date().toLocaleDateString()}`,
-                description: description || '',
-                file_url: '',
-                status: 'submitted'
-            })
-            .select()
-            .maybeSingle();
-
-        if (repoError) throw repoError;
-
-        return { event: bookData, repository: repoData };
+        return bookData;
     } catch (error: any) {
         console.error('Booking error:', error);
         throw error;

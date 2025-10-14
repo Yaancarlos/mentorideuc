@@ -44,6 +44,7 @@ export default function BookingScreen() {
             setSelectedTutor(tutorId);
             const slots = await getTutorAvailability(tutorId);
             setAvailability(slots || []);
+            console.log(availability)
         } catch (error: any) {
             Alert.alert("Error", "No se pudieron cargar los horarios disponibles");
             console.error(error);
@@ -52,7 +53,11 @@ export default function BookingScreen() {
         }
     }
 
+
+    // eventId is booking id
     async function handleBook(eventId: string) {
+        console.log(eventId)
+
         try {
             setLoading(true);
             if (!profile?.id) {
@@ -69,7 +74,7 @@ export default function BookingScreen() {
             const newDescription = description.trim();
 
             await bookEvent(eventId, profile.id, newTitle, newDescription);
-            Alert.alert("Éxito", "La sesión ha sido guardada");
+            Alert.alert("Éxito", "La sesion se ha mandado al tutor");
 
             // Reset form
             setTitle("");
