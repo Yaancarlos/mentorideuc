@@ -9,6 +9,8 @@ import {formatDate, formatDateTime} from "@/src/utils/date";
 import {getSessionColor} from "@/src/utils/tagColors";
 import SearchFilter from "@/src/components/Search";
 import SessionCard from "@/src/components/SessionCard";
+import {ALLOWED_PROPS} from "react-native-gesture-handler/lib/typescript/handlers/gestures/GestureDetector/utils";
+import Loading from "@/src/components/Loading";
 
 export default function SessionsListScreenTutor() {
     const { profile, loading: loadingUser } = useCurrentUser();
@@ -104,15 +106,12 @@ export default function SessionsListScreenTutor() {
 
     if (loading || loadingUser) {
         return (
-            <View className="flex-1 justify-center items-center">
-                <ActivityIndicator size="large" color="#3b82f6" />
-                <Text className="mt-2 text-gray-500">Cargando...</Text>
-            </View>
+            <Loading />
         );
     }
 
     return (
-        <View className="flex-1 p-5">
+        <View className="flex-1 blur bg-white p-5">
             <Text className="text-2xl font-bold w-full text-center mb-4">Mi Agenda</Text>
             <SearchFilter
                 data={repositories}

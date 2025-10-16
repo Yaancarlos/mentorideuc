@@ -83,7 +83,7 @@ const SessionCard: React.FC<SessionCardProps> = ({
     };
 
     const getCardStyle = () => {
-        const baseStyle = "bg-white p-4 rounded-lg mb-3 border border-gray-200";
+        const baseStyle = "bg-white p-4 rounded shadow shadow-gray-200 border border-solid border-gray-200 mb-3";
 
         if (variant === 'compact') {
             return `${baseStyle} p-3`;
@@ -121,7 +121,6 @@ const SessionCard: React.FC<SessionCardProps> = ({
                     </Text>
                 </View>
             )}
-
             {variant !== 'compact' && (
                 <Text className="text-gray-500 text-sm mb-3">
                     {item?.description || "No descripción"}
@@ -155,10 +154,6 @@ const SessionCard: React.FC<SessionCardProps> = ({
                     </View>
                 </View>
             )}
-
-            <View className="absolute top-2 right-2 opacity-30">
-                <Ionicons name="ellipsis-horizontal" size={16} color="#6B7280" />
-            </View>
         </TouchableOpacity>
     );
 };

@@ -1,6 +1,5 @@
 import React from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
-import {supabase} from "@/lib/supabase";
 import useAuth from "@/src/components/Auth";
 
 export default function StudentDashboard() {

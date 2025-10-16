@@ -4,6 +4,7 @@ import { Dropdown } from 'react-native-element-dropdown';
 import { bookEvent, getTutorAvailability } from "@/lib/api/caledar";
 import { useCurrentUser } from "@/lib/hooks";
 import { supabase } from "@/lib/supabase";
+import Loading from "@/src/components/Loading";
 
 export default function BookingScreen() {
     const [loading, setLoading] = useState(false);
@@ -44,7 +45,6 @@ export default function BookingScreen() {
             setSelectedTutor(tutorId);
             const slots = await getTutorAvailability(tutorId);
             setAvailability(slots || []);
-            console.log(availability)
         } catch (error: any) {
             Alert.alert("Error", "No se pudieron cargar los horarios disponibles");
             console.error(error);
@@ -88,10 +88,7 @@ export default function BookingScreen() {
     }
 
     if (loading || profileLoading) return (
-        <View className="flex-1 justify-center items-center">
-            <ActivityIndicator size="large" color="#3b82f6" />
-            <Text className="mt-2 text-gray-500">Cargando...</Text>
-        </View>
+        <Loading />
     );
 
     return (

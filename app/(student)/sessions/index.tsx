@@ -9,6 +9,7 @@ import SearchFilter from "@/src/components/Search";
 import Entypo from "@expo/vector-icons/Entypo";
 import SessionCard from "@/src/components/SessionCard";
 import {cancelEvent} from "@/lib/api/caledar";
+import Loading from "@/src/components/Loading";
 
 export default function SessionsListScreen() {
     const { profile } = useCurrentUser();
@@ -56,7 +57,6 @@ export default function SessionsListScreen() {
             }));
 
             setRepositories(eventsWithRepos || []);
-            console.log(eventsWithRepos);
         } catch (error: any) {
             Alert.alert("Error", error.message);
         } finally {
@@ -105,10 +105,7 @@ export default function SessionsListScreen() {
 
     if (loading) {
         return (
-            <View className="flex-1 justify-center items-center">
-                <ActivityIndicator size="large" color="#3b82f6" />
-                <Text className="mt-2 text-gray-500">Cargando sesiones...</Text>
-            </View>
+            <Loading />
         );
     }
 

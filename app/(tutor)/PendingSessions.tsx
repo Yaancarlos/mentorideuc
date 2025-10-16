@@ -6,6 +6,7 @@ import { useCurrentUser } from "@/lib/hooks";
 import { EventStatus } from "@/src/types/auth";
 import {Ionicons} from "@expo/vector-icons";
 import Entypo from '@expo/vector-icons/Entypo'
+import Loading from "@/src/components/Loading";
 
 
 const PendingSessions = () => {
@@ -79,15 +80,12 @@ const PendingSessions = () => {
         }
     }
 
-    if (loading || profileLoading) return (
-        <View className="flex-1 justify-center items-center">
-            <ActivityIndicator size="large" color="#3b82f6" />
-            <Text className="mt-2 text-gray-500">Cargando...</Text>
-        </View>
-    );
+    if (loading || profileLoading) {
+        return <Loading />;
+    }
 
     return (
-        <View className="flex-1 p-5">
+        <View className="flex-1 bg-white p-5">
             <Text className="text-2xl font-bold w-full text-center mb-4">Sesiones Pendientes</Text>
             <FlatList
                 data={pendingSessions}

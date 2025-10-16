@@ -8,6 +8,8 @@ import { supabase } from "@/lib/supabase";
 import { useCurrentUser } from "@/lib/hooks";
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
+import Loading from "@/src/components/Loading";
+import MessageSection from "@/src/components/Message";
 
 export default function RepositoryDetailTutorScreen() {
     const { id } = useLocalSearchParams();
@@ -103,7 +105,6 @@ export default function RepositoryDetailTutorScreen() {
         try {
             setLoading(true);
             const feedbackData = await getRepositoryFeedback(id as string);
-            console.log("FEEADBACKDATA:", feedbackData);
             setFeedback(feedbackData || []);
         } catch (error: any) {
             console.error("Error cargando feedback: ", error);
@@ -124,7 +125,6 @@ export default function RepositoryDetailTutorScreen() {
             const response = await addFeedback(id as string, feedBackUser, profile?.id as string, profile?.role as string);
 
             setFeedBackUser("");
-            console.log(response);
             await loadRepository();
         } catch (error: any) {
             console.error("Error cargando feedback:", error);
@@ -146,11 +146,9 @@ export default function RepositoryDetailTutorScreen() {
 
             if (result.canceled) return;
 
-            const uploadPromises = result.assets.map(asset => {
+            result.assets.map(asset => {
                 uploadRepositoryFile(id as string, asset, profile?.id as string);
             })
-
-            console.log(uploadPromises.length)
 
             await loadRepositoryFiles();
         } catch (error:any) {
@@ -231,10 +229,7 @@ export default function RepositoryDetailTutorScreen() {
 
     if (loading) {
         return (
-            <View className="flex-1 justify-center items-center">
-                <ActivityIndicator size="large" color="#3b82f6" />
-                <Text className="mt-2 text-gray-500">Cargando repositorio...</Text>
-            </View>
+            <Loading />
         );
     }
 
@@ -252,7 +247,7 @@ export default function RepositoryDetailTutorScreen() {
                         {repository?.description || "No descripcion"}
                     </Text>
                 </View>
-                <View className="flex-row items-center justify-end gap-6 mb-8">
+                <View className="flex-row items-center justify-end gap-6">
                     <View className="flex-row items-center gap-2">
                         <Ionicons name="calendar-outline" size={20} color="#6B7280" />
                         <Text className="text-base text-gray-600">
@@ -266,69 +261,41 @@ export default function RepositoryDetailTutorScreen() {
                         </Text>
                     </View>
                 </View>
-                <View className="mb-6 mt-16">
-                    <Text className="text-xl font-semibold text-gray-900 mb-2">
+                <View className="my-20">
+                    <Text className="text-xl font-semibold text-gray-900 mb-3">
                         Observaciones
                     </Text>
                     <View>
-                        <View className="text-base text-gray-700">
-                            {feedback.length > 0 ? (
-                                feedback.map(element => {
-                                    const userIcon = getFeedbackIcon(element?.type as string);
-                                    return (
-                                        <View
-                                            key={element.id}
-                                            className="flex flex-col w-full"
-                                        >
-                                            <View className={`flex gap-2 mb-2 items-center ${
-                                                element?.type === "tutor" ? 'justify-start flex-row-reverse' :
-                                                    element?.type === "student" ? 'justify-start flex-row' :
-                                                        "justify-start flex-row"    
-                                            }`}>
-                                                <FontAwesome6 name={userIcon.icon} size={20} color={userIcon.color} />
-                                                <Text className={`text-white w-auto max-w-72 text-base rounded-xl px-3 py-1 ${
-                                                    element?.type === "tutor" ? 'bg-blue-500' :
-                                                        element?.type === "student" ? 'bg-green-500' :
-                                                            "bg-blue-500"
-                                                }`}>{element?.message || ""}</Text>
-                                            </View>
-                                        </View>
-                                    )
-                                })
-                            ) : (
-                                <View className="flex items-center w-full gap-1 flex-col justify-center py-8">
-                                    <AntDesign name="message" size={24} color="#9CA3AF" />
-                                    <Text className="text-gray-500 text-center mt-2">
-                                        No hay observaciones
-                                    </Text>
-                                </View>
-                            ) }
+                        <View className="flex-1">
+                            <MessageSection
+                                feedback={feedback}
+                                profile={profile?.role as string}
+                            />
                         </View>
                     </View>
-                    <View>
+                    <View className="flex flex-row mt-3 items-end gap-2">
                         <TextInput
-                            className="border border-solid border-gray-300 mt-5 h-full min-h-36 max-h-36 rounded p-3 bg-white"
-                            placeholder="Escribe las observaciones, cambios, feedback etc."
-                            placeholderTextColor="#9ca3af"
+                            className="flex-1 border border-solid border-gray-300 rounded-xl py-2.5 px-4 bg-white text-base"
                             value={feedBackUser}
                             onChangeText={setFeedBackUser}
+                            placeholder="Type your message..."
                             multiline
-                            numberOfLines={3}
+                            numberOfLines={5}
                             textAlignVertical="top"
                         />
-                    </View>
-                    <View className="flex mt-3 flex-row justify-end">
                         <TouchableOpacity
-                            className="rounded-md bg-green-500 px-4 py-2"
+                            className={`rounded-full p-3 ${feedBackUser.trim() ? 'bg-green-500' : 'bg-gray-400'}`}
                             onPress={() => handleFeedbackAdd()}
+                            disabled={!feedBackUser.trim()}
                         >
-                            <Text className="text-white font-semibold text-base">
-                                Enviar
-                            </Text>
+                            <Ionicons
+                                name="send"
+                                size={18}
+                                color="white"
+                            />
                         </TouchableOpacity>
                     </View>
                 </View>
-
                 <View className="mb-6">
                     <View className="flex-row justify-between items-center mb-4">
                         <Text className="text-xl font-semibold text-gray-900">

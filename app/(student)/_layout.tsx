@@ -7,6 +7,7 @@ export default function StudentLayout() {
             <Stack.Screen name="index" options={{ headerShown: false }} />
             <Stack.Screen name="sessions" options={{ headerShown: false }} />
             <Stack.Screen name="BookingScreen" options={{ headerShown: false }}  />
+            <Stack.Screen name="Profile" options={{ headerShown: false }}  />
         </Stack>
     );
 }
