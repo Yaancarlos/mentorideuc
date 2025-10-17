@@ -2,17 +2,6 @@ import {supabase} from "@/lib/supabase";
 import {EventStatus, RepositoryStatus} from "@/src/types/auth";
 
 // --------- Calls for Bookings ----------------------
-
-export async function getAvailableEvents() {
-    const { data, error } = await supabase
-        .from("calendar_events")
-        .select("*")
-        .eq("status", EventStatus.AVAILABLE)
-        .order("start_time", {ascending: true});
-    if (error) throw error;
-    return data;
-}
-
 export async function getTutorAvailability(tutorId: string) {
     const { data, error } = await supabase
         .from("calendar_events")

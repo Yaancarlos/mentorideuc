@@ -18,6 +18,13 @@ export enum EventStatus {
     PENDING = 'pending'
 }
 
+export enum Role {
+    ALL = 'all',
+    STUDENT = 'student',
+    ADMIN = 'admin',
+    TUTOR = 'tutor',
+}
+
 export enum RepositoryStatus {
     ALL = 'all',
     SUBMITTED = 'submitted',

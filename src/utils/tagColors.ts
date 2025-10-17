@@ -16,3 +16,12 @@ export function getSessionColor (status: string) {
         default: return 'bg-gray-500';
     }
 }
+
+export function getUserTagColor (status: string) {
+    switch (status) {
+        case 'student': return 'bg-blue-100 text-blue-600 border border-blue-300';
+        case 'tutor': return 'bg-green-100 text-green-600 border border-green-300';
+        case 'admin': return 'bg-indigo-100 text-indigo-600 border border-indigo-300';
+        default: return 'bg-gray-500 text-gray-500 border border-gray-500';
+    }
+}
