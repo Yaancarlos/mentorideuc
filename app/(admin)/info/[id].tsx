@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text } from 'react-native';
+import {View, Text, Alert} from 'react-native';
 import {useCurrentUser} from "@/lib/hooks";
 import Loading from "@/src/components/Loading";
 import {getUserById} from "@/lib/api/admin";
 import {useLocalSearchParams} from "expo-router";
+import ProfileCard from "@/src/components/ProfileCard";
 
 interface User {
     id: string;
-    name: string;
-    email: string;
-    created_at: string;
-    updated_at: string;
-    avatar_url: string;
+    name?: string;
+    email?: string;
+    created_at?: string;
+    updated_at?: string;
+    avatar_url?: string;
 }
 
 const UserInfo = () => {
@@ -38,12 +39,15 @@ const UserInfo = () => {
         return <Loading />
     }
 
+    const handleOnPress = (item: any) => {
+        Alert.alert("Edit", "Edit profile")
+    }
+
     return (
-        <View>
-            <Text>{user?.name}</Text>
-            <Text>{user?.email}</Text>
-            <Text>{user?.created_at || "No tiene"}</Text>
-        </View>
+        <ProfileCard
+            item={user}
+            onPress={handleOnPress}
+        />
     )
 
 };
