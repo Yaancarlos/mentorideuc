@@ -3,12 +3,6 @@
 ### Diagrama de Estados
 ![Diagrama de Estados](./assets/images/Estados.jpeg)
 
-### Diagrama de Secuencia avanze
-![Diagrama de Secuencia](./assets/images/Secuancia%20avanze.png)
-
-### Diagrama de Secuencia asignacion
-![Diagrama de Secuencia](./assets/images/Secuencia%20book.png)
-
 ### Diagrama de paquetes
 ![Diagrama de Secuencia](./assets/images/paquetes.jpeg)
 
@@ -26,3 +20,9 @@
 
 ### Diagrama de Casos de Uso
 ![Diagrama de Secuencia](./assets/images/casosdeuso.jpeg)
+
+### Diagrama de Secuencia avanze
+![Diagrama de Secuencia](./assets/images/sequencia011.PNG)
+
+### Diagrama de Secuencia asignacion
+![Diagrama de Secuencia](./assets/images/sequencia010.png)
