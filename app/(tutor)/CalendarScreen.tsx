@@ -101,10 +101,10 @@ export default function MyCalendarScreen() {
         return <Loading />;
     }
     return (
-        <View className="flex-1 bg-white p-5">
+        <View className="flex-1 bg-white pt-20 px-5">
             {profile?.role === "tutor" && (
                 <View>
-                    <Text className="text-lg mb-4">Agregar una nueva sesión</Text>
+                    <Text className="text-2xl font-semibold mb-4">Agregar una nueva sesión</Text>
                     <View className="flex mb-5 flex-col gap-3">
                         <TextInput
                             className="border border-solid border-gray-300 rounded p-3"

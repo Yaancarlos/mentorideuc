@@ -9,14 +9,11 @@ export default function Home() {
     const [users, setUsers] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
 
-    console.warn(profile)
-
     const loadUsers = async () => {
         try {
             setLoading(true);
             const usersData = await getUsers();
             setUsers(usersData);
-            console.warn(usersData);
         } catch (error: any) {
             Alert.alert("Error", error.message);
         } finally {
@@ -33,7 +30,7 @@ export default function Home() {
     }
 
     return (
-        <View>
+        <View className="flex-1 bg-white px-5 pt-20 pb-5">
             <Text>Index</Text>
         </View>
     )

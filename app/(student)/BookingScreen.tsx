@@ -92,8 +92,8 @@ export default function BookingScreen() {
     );
 
     return (
-        <View className="flex-1 p-5">
-            <Text className="text-lg font-semibold mb-5">Nueva solicitud de tutoría</Text>
+        <View className="flex-1 bg-white pt-20 px-5">
+            <Text className="text-2xl font-semibold mb-5">Nueva solicitud de tutoría</Text>
 
             <View className="flex mb-5 flex-col gap-4">
                 <View>

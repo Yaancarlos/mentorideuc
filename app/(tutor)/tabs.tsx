@@ -6,6 +6,7 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import MyCalendarScreen from "@/app/(tutor)/CalendarScreen";
 import PendingSessions from "@/app/(tutor)/PendingSessions";
 import Profile from "@/app/(tutor)/Profile";
+import {Tabs} from "expo-router";
 
 const Tab = createBottomTabNavigator();
 
@@ -13,6 +14,22 @@ export default function TutorTabs() {
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
+                headerShown: false,
+                tabBarShowLabel: true,
+                tabBarStyle: {
+                    backgroundColor: "#FFF",
+                    borderRadius: 10,
+                    marginHorizontal: 18,
+                    marginBottom: 30,
+                    paddingTop: 3,
+                    height: 60,
+                    position: "absolute",
+                    elevation: 10,
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 1 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 5,
+                },
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName: keyof typeof Ionicons.glyphMap;
 
@@ -35,7 +52,10 @@ export default function TutorTabs() {
                 },
             })}
         >
-            <Tab.Screen name="Inicio" component={Dashboard} />
+            <Tab.Screen
+                name="Inicio"
+                options={{headerShown: false}}
+                component={Dashboard} />
             <Tab.Screen name="Agenda" component={SessionsListScreenTutor} />
             <Tab.Screen name="Calendario" component={MyCalendarScreen} />
             <Tab.Screen name="Pendientes" component={PendingSessions} />

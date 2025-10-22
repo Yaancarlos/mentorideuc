@@ -111,7 +111,7 @@ export default function SessionsListScreenTutor() {
     }
 
     return (
-        <View className="flex-1 blur bg-white p-5">
+        <View className="flex-1  bg-white pt-20 pb-5 px-5">
             <Text className="text-2xl font-bold w-full text-center mb-4">Mi Agenda</Text>
             <SearchFilter
                 data={repositories}

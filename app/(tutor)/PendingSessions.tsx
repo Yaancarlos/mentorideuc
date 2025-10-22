@@ -85,7 +85,7 @@ const PendingSessions = () => {
     }
 
     return (
-        <View className="flex-1 bg-white p-5">
+        <View className="flex-1 bg-white pt-20 pb-5 px-5">
             <Text className="text-2xl font-bold w-full text-center mb-4">Sesiones Pendientes</Text>
             <FlatList
                 data={pendingSessions}

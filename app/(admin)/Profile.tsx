@@ -6,7 +6,7 @@ const Profile = () => {
     const { signOut } = useAuth();
 
     return (
-        <View>
+        <View className="flex-1 bg-white px-5 pt-20">
             <TouchableOpacity
                 onPress={() => signOut()}
             >

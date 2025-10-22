@@ -11,6 +11,22 @@ export default function AdminTabs() {
     return (
         <Tab.Navigator
             screenOptions={({ route }) => ({
+                headerShown: false,
+                tabBarShowLabel: true,
+                tabBarStyle: {
+                    backgroundColor: "#FFF",
+                    borderRadius: 10,
+                    marginHorizontal: 18,
+                    marginBottom: 30,
+                    paddingTop: 3,
+                    height: 60,
+                    position: "absolute",
+                    elevation: 10,
+                    shadowColor: '#000',
+                    shadowOffset: { width: 0, height: 1 },
+                    shadowOpacity: 0.1,
+                    shadowRadius: 5,
+                },
                 tabBarIcon: ({ focused, color, size }) => {
                     let iconName: keyof typeof Ionicons.glyphMap;
 

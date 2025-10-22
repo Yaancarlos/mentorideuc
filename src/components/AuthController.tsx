@@ -2,7 +2,6 @@ import React, {useEffect} from 'react';
 import {View, ActivityIndicator, Text, Alert} from 'react-native';
 import {useSession,  useProfile} from "@/lib/hooks";
 
-/* Screens */
 import Account from '@/app/Account';
 import LoginScreen from "@/app/(auth)/Login";
 import AdminTabs from "@/app/(admin)/tabs";
@@ -48,11 +47,9 @@ export default function AuthController() {
         return <LoginScreen />;
     }
 
-    // Show different dashboards according to the Role
     if (profile?.role === 'admin') return <AdminTabs />;
     if (profile?.role === 'tutor') return <TutorTabs />;
     if (profile?.role === 'student') return <StudentTabs />;
 
-    // If Role missing, show account edit screen to set role/name first
     return <Account session={session} />;
 }
