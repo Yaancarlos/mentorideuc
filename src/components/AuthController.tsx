@@ -8,6 +8,7 @@ import AdminTabs from "@/app/(admin)/tabs";
 import TutorTabs from "@/app/(tutor)/tabs";
 import StudentTabs from "@/app/(student)/tabs";
 import {supabase} from "@/lib/supabase";
+import Loading from "@/src/components/Loading";
 
 export default function AuthController() {
     const { session, loading: sessionLoading, error: sessionError } = useSession();
@@ -27,12 +28,7 @@ export default function AuthController() {
     const loading = sessionLoading || (session && profileLoading);
 
     if (loading) {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size="large" />
-                <Text className="mt-4 text-gray-600">Loading...</Text>
-            </View>
-        );
+        return <Loading />;
     }
 
     if (profileError) {

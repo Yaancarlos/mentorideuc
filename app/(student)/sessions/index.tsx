@@ -111,7 +111,7 @@ export default function SessionsListScreen() {
 
     return (
         <View className="flex-1 pt-20 pb-5 bg-white px-5">
-            <Text className="text-lg font-bold w-full text-center mb-4">Mis Tutorias</Text>
+            <Text className="text-2xl text-center font-semibold text-gray-900 mb-5">Mis Tutorias</Text>
             <SearchFilter
                 data={repositories}
                 onFilteredDataChange={setFilteredRepositories}

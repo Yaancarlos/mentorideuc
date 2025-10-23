@@ -15,43 +15,87 @@ interface ProfileCardProps {
         role?: string;
         updated_at?: string;
     };
-    onPress?: (item: any) => void;
+    onEditProfile?: (item: any) => void;
+    onCleanHistory?: (item: any) => void;
+    onClearCache?: (item: any) => void;
+    onSignOut?: () => void;
     currentUserId?: string;
+    options: {
+        isAdmin?: boolean,
+        showArrow?: boolean;
+    }
 }
 
 const ProfileCard: React.FC<ProfileCardProps> = ({
                                                     item,
-                                                    onPress,
+                                                    onEditProfile,
+                                                    onCleanHistory,
+                                                    onClearCache,
+                                                    onSignOut,
+                                                    options = {}
                                                  }) => {
     const { signOut } = useAuth();
 
-    const handleOnPress = () => {
-        if (onPress) onPress(item);
+    const handleEditProfile = () => {
+        if (onEditProfile) onEditProfile(item);
         else {
-            Alert.alert("On press", "Press")
+            Alert.alert("Edit", "Edit the profile")
+        }
+    }
+
+    const handleCleanHistory = () => {
+        if (onCleanHistory) onCleanHistory(item);
+        else {
+            Alert.alert("Clean History", "Your trying to delete the user's history")
+        }
+    }
+
+    const handleClearCache = () => {
+        if (onClearCache) onClearCache(item);
+        else {
+            Alert.alert("Clear Cache", "Your trying to delete the user's cache")
+        }
+    }
+
+    const getColorEdit = (data: string) => {
+        switch (data){
+            case 'admin':
+                return "bg-purple-500";
+            case 'student':
+                return "bg-blue-500";
+            case 'tutor':
+                return "bg-green-500";
+            default:
+                return "bg-gray-500";
         }
     }
 
     const handleSignOut = async () => {
-        try {
-            await signOut();
-            // @ts-ignore
-            router.replace('/Login');
-        } catch (error) {
-            console.error('Error signing out:', error);
+        if (onSignOut) onSignOut();
+        else {
+            try {
+                await signOut();
+                // @ts-ignore
+                router.replace('/Login');
+            } catch (error) {
+                console.error('Error signing out:', error);
+            }
         }
     };
 
     return (
         <View className="flex-1 gap-10 bg-white pt-20 pb-5 px-5">
             <View className="flex justify-between flex-row items-center">
-                <TouchableOpacity onPress={() => router.back()}>
-                    <Ionicons name="chevron-back-outline" color="#333333" size={24}/>
-                </TouchableOpacity>
+                {options.showArrow === true && (
+                    <TouchableOpacity onPress={() => router.back()}>
+                        <Ionicons name="chevron-back-outline" color="#333333" size={24}/>
+                    </TouchableOpacity>
+                )
+                }
                 <Text className="font-bold text-xl text-gray-800">
                     Mi perfil
                 </Text>
-                <TouchableOpacity onPress={handleOnPress}>
+                <TouchableOpacity onPress={handleEditProfile}>
                     <Ionicons name="settings-outline" color="#333333" size={24} />
                 </TouchableOpacity>
             </View>
@@ -79,8 +123,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                         </Text>
                     </View>
                     <TouchableOpacity
-                        onPress={handleOnPress}
-                        className="bg-green-600 rounded px-7 py-3"
+                        onPress={handleEditProfile}
+                        className={`${getColorEdit(item.role as string)} rounded px-7 py-3`}
                     >
                         <Text className="text-white font-semibold">Editar Perfil</Text>
                     </TouchableOpacity>
@@ -88,55 +132,74 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             </View>
             <ScrollView>
                 <View className="flex flex-col gap-5">
-                    <TouchableOpacity
-                        className="flex gap-3 justify-between flex-row"
-                        disabled={true}
-                    >
-                        <View className="flex flex-row gap-5 items-center">
-                            <Feather name="book-open" color="#111827" size={24} />
-                            <Text className="font-medium text-gray-700 text-xl">
-                                Sesiones
-                            </Text>
-                        </View>
-                        <Ionicons name="chevron-forward-outline" color="#111827" size={24} />
-                    </TouchableOpacity>
-                    <View className="border border-solid border-gray-400"></View>
-                    <TouchableOpacity
-                        className="flex gap-3  justify-between flex-row"
-                        disabled={true}
-                    >
-                        <View className="flex flex-row gap-5 items-center">
-                            <Feather name="trash-2" color="#111827" size={24} />
-                            <Text className="font-medium text-gray-700 text-xl">
-                                Limpiar cache
-                            </Text>
-                        </View>
-                        <Ionicons name="chevron-forward-outline" color="#111827" size={24} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        className="flex gap-3 justify-between flex-row"
-                        disabled={true}
-                    >
-                        <View className="flex flex-row gap-5 items-center">
-                            <Feather name="clock" color="#111827" size={24} />
-                            <Text className="font-medium text-gray-700 text-xl">
-                                Limpiar historial
-                            </Text>
-                        </View>
-                        <Ionicons name="chevron-forward-outline" color="#111827" size={24} />
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        className="flex gap-3 justify-between flex-row"
-                        onPress={handleSignOut}
-                    >
-                        <View className="flex flex-row gap-5 items-center">
-                            <Feather name="log-out" color="#ef4444" size={24} />
-                            <Text className="font-medium text-red-500 text-xl">
-                                Salir
-                            </Text>
-                        </View>
-                        <Ionicons name="chevron-forward-outline" color="#ef4444" size={24} />
-                    </TouchableOpacity>
+                    {options.isAdmin === true && (
+                        <>
+                            <TouchableOpacity
+                                className="flex gap-3 justify-between flex-row"
+                                onPress={handleSignOut}
+                            >
+                                <View className="flex flex-row gap-5 items-center">
+                                    <Feather name="log-out" color="#ef4444" size={24} />
+                                    <Text className="font-medium text-red-500 text-xl">
+                                        Salir
+                                    </Text>
+                                </View>
+                                <Ionicons name="chevron-forward-outline" color="#ef4444" size={24} />
+                            </TouchableOpacity>
+                        </>
+                    ) || (
+                        <>
+                            <TouchableOpacity
+                                className="flex gap-3 justify-between flex-row"
+                                disabled={true}
+                            >
+                                <View className="flex flex-row gap-5 items-center">
+                                    <Feather name="book-open" color="#111827" size={24} />
+                                    <Text className="font-medium text-gray-700 text-xl">
+                                        Sesiones
+                                    </Text>
+                                </View>
+                                <Ionicons name="chevron-forward-outline" color="#111827" size={24} />
+                            </TouchableOpacity>
+                            <View className="border border-solid border-gray-400"></View>
+                            <TouchableOpacity
+                                className="flex gap-3  justify-between flex-row"
+                                onPress={handleClearCache}
+                            >
+                                <View className="flex flex-row gap-5 items-center">
+                                    <Feather name="trash-2" color="#111827" size={24} />
+                                    <Text className="font-medium text-gray-700 text-xl">
+                                        Limpiar cache
+                                    </Text>
+                                </View>
+                                <Ionicons name="chevron-forward-outline" color="#111827" size={24} />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                className="flex gap-3 justify-between flex-row"
+                                onPress={handleCleanHistory}
+                            >
+                                <View className="flex flex-row gap-5 items-center">
+                                    <Feather name="clock" color="#111827" size={24} />
+                                    <Text className="font-medium text-gray-700 text-xl">
+                                        Limpiar historial
+                                    </Text>
+                                </View>
+                                <Ionicons name="chevron-forward-outline" color="#111827" size={24} />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                className="flex gap-3 justify-between flex-row"
+                                onPress={handleSignOut}
+                            >
+                                <View className="flex flex-row gap-5 items-center">
+                                    <Feather name="log-out" color="#ef4444" size={24} />
+                                    <Text className="font-medium text-red-500 text-xl">
+                                        Salir
+                                    </Text>
+                                </View>
+                                <Ionicons name="chevron-forward-outline" color="#ef4444" size={24} />
+                            </TouchableOpacity>
+                        </>
+                    )}
                 </View>
             </ScrollView>
         </View>

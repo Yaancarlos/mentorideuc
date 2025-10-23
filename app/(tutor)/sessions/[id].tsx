@@ -234,7 +234,7 @@ export default function RepositoryDetailTutorScreen() {
     }
 
     return (
-        <ScrollView className="flex-1 bg-white">
+        <ScrollView className="flex-1 pt-14 bg-white">
             <View className="px-6 py-8">
                 <Text className="text-2xl font-bold w-full text-center text-gray-900 mb-8">
                     {repository?.title || "Sin titulo"}

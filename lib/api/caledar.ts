@@ -139,7 +139,6 @@ export async function uploadRepositoryFile(repositoryId: string, file: any, uplo
             name: file.name,
         };
 
-        // Upload using Supabase storage
         const { data: uploadData, error: uploadError } = await supabase.storage
             .from('repository-files')
             .upload(fileName, fileContent as any);
@@ -149,12 +148,10 @@ export async function uploadRepositoryFile(repositoryId: string, file: any, uplo
             throw uploadError;
         }
 
-        // Get the public URL
         const { data: { publicUrl } } = supabase.storage
             .from('repository-files')
             .getPublicUrl(fileName);
 
-        // Create record in repository_files table
         const { data, error } = await supabase
             .from('repository_files')
             .insert({

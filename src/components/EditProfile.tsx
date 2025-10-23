@@ -83,7 +83,9 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({ user, onSave, onCance
                 <Text className="font-bold text-xl text-gray-800">
                     Editar Perfil
                 </Text>
-                <View style={{ width: 24 }} />
+                <TouchableOpacity onPress={handleSave}>
+                    <Ionicons name="checkmark" color="#333333" size={26}/>
+                </TouchableOpacity>
             </View>
 
             <View

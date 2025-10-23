@@ -5,6 +5,7 @@ import Loading from "@/src/components/Loading";
 import {getUserById, updateUser} from "@/lib/api/admin";
 import {useLocalSearchParams} from "expo-router";
 import ProfileCard from "@/src/components/ProfileCard";
+import { cleanUserHistory, cleanUserCache } from "@/lib/api/admin";
 import EditProfile from "@/src/components/EditProfile";
 
 interface User {
@@ -71,6 +72,77 @@ const UserInfo = () => {
         setIsEditing(true);
     }
 
+    const handleClearCache = async (item: any) => {
+        const confirmationText = "ELIMINAR";
+
+        Alert.prompt(
+            "Eliminar",
+            `Esta acción NO se puede deshacer.\nPara eliminar TODA la información de:\n"${item.name}"\nEscribe "${confirmationText}" para confirmar:`,
+            [
+                { text: "Cancelar", style: "default"},
+                { text: "Eliminar", style: "destructive",
+                    // @ts-ignore
+                    onPress: async (inputText: string) => {
+                        if (!inputText || inputText.toUpperCase() !== confirmationText) {
+                            Alert.alert(
+                                "Cancelado",
+                                `Debes escribir "${confirmationText}" para confirmar.`
+                            );
+                            return;
+                        }
+
+                        try {
+                            setLoading(true);
+
+                            await cleanUserCache(item.id);
+                            setIsEditing(false);
+
+                            Alert.alert("Éxito", `Se ha eliminado toda la información de ${item.name} correctamente.`);
+                        } catch (error: any) {
+                            console.error("Delete error:", error);
+                            Alert.alert(
+                                "Error",
+                                error.message || 'Error al eliminar la información del usuario. Por favor intenta nuevamente.'
+                            );
+                        } finally {
+                            setLoading(false);
+                        }
+                    }
+                }
+            ],
+            'plain-text',
+            '',
+            {
+                placeholder: `Escribe ${confirmationText}`,
+                autoCapitalize: 'characters',
+                autoCorrect: false
+            }
+        );
+    };
+
+    const handleClearHistory = async (item: any) => {
+        Alert.alert(
+            "Informacion",
+            `¿Seguro que quieres eliminar el historial a ${item.name}?`,
+            [
+                { text: "Cancelar", style: "default" },
+                { text: "Eliminar", style: "destructive", onPress: async () => {
+                        try {
+                            setLoading(true);
+                            await cleanUserHistory(item.id);
+                            setIsEditing(false);
+                            Alert.alert("Exito", `Se ha eliminado correctamente!`);
+                        } catch (error: any) {
+                            throw new Error(error.message || 'Error al actualizar el usuario');
+                        } finally {
+                            setLoading(false);
+                        }
+                    }
+                }
+            ]
+        );
+    }
+
     useEffect(() => {
         loadUserInfo();
     }, []);
@@ -100,7 +172,13 @@ const UserInfo = () => {
     return (
         <ProfileCard
             item={user}
-            onPress={handleOnPress}
+            onEditProfile={handleOnPress}
+            onCleanHistory={handleClearHistory}
+            onClearCache={handleClearCache}
+            options ={{
+                isAdmin: false,
+                showArrow: true,
+            }}
         />
     )
 

@@ -107,7 +107,67 @@ export async function deleteUser(id: string) {
             .eq("id", id);
 
         if (profileError) throw profileError;
-    };
+    }
+
     return true;
+}
+
+export async function cleanUserHistory(userId: string) {
+    const cutoffDate = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+
+    const { data: calendarData, error: calendarDataError } = await supabase
+        .from("calendar_events")
+        .delete()
+        .or(`student_id.eq.${userId},tutor_id.eq.${userId}`)
+        .or(`status.eq.canceled,status.eq.pending,end_time.lt.${cutoffDate}`);
+
+    if (calendarDataError) throw calendarDataError;
+
+    return { success: true };
+}
+
+
+export async function cleanUserCache(userId: string) {
+    const { data: userRepositories, error: userRepositoriesError } = await supabase
+        .from("repository")
+        .select("id")
+        .or(`student_id.eq.${userId},tutor_id.eq.${userId}`);
+
+    if (userRepositoriesError) throw userRepositoriesError;
+
+    if (userRepositories && userRepositories.length > 0) {
+        for (const repository of userRepositories) {
+            const { data: files, error: listError } = await supabase.storage
+                .from('repository-files')
+                .list(repository.id);
+
+            if (!listError && files && files.length > 0) {
+                const filePaths = files.map(file => `${repository.id}/${file.name}`);
+                const { error: storageError } = await supabase.storage
+                    .from('repository-files')
+                    .remove(filePaths);
+
+                if (storageError) {
+                    console.warn(`Could not delete storage files for repo ${repository.id}:`, storageError);
+                }
+            }
+        }
+    }
+
+    const { error: calendarError } = await supabase
+        .from("calendar_events")
+        .delete()
+        .or(`student_id.eq.${userId},tutor_id.eq.${userId}`);
+
+    if (calendarError) throw calendarError;
+
+    const { error: reposDeleteError } = await supabase
+        .from("repository")
+        .delete()
+        .or(`student_id.eq.${userId},tutor_id.eq.${userId}`);
+
+    if (reposDeleteError) throw reposDeleteError;
+
+    return { success: true };
 }
 

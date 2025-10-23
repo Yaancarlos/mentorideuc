@@ -93,11 +93,11 @@ export default function BookingScreen() {
 
     return (
         <View className="flex-1 bg-white pt-20 px-5">
-            <Text className="text-2xl font-semibold mb-5">Nueva solicitud de tutoría</Text>
+            <Text className="text-2xl text-center font-semibold text-gray-900 mb-5">Nueva solicitud de tutoría</Text>
 
             <View className="flex mb-5 flex-col gap-4">
                 <View>
-                    <Text className="text-gray-700 mb-2 font-medium">Titulo de la sesión</Text>
+                    <Text className="text-xl font-bold text-gray-900 mb-3">Titulo de la sesión</Text>
                     <TextInput
                         className="border border-solid border-gray-300 rounded p-3 bg-white"
                         placeholder="Título de la sesión"
@@ -108,7 +108,7 @@ export default function BookingScreen() {
                 </View>
 
                 <View>
-                    <Text className="text-gray-700 mb-2 font-medium">Seleccionar tutor:</Text>
+                    <Text className="text-xl font-bold text-gray-900 mb-3">Seleccionar tutor:</Text>
                     <Dropdown
                         data={tutors.map(tutor => ({
                             label: tutor.name,
@@ -145,7 +145,7 @@ export default function BookingScreen() {
                 </View>
 
                 <View>
-                    <Text className="text-gray-700 mb-2 font-medium">Descripción</Text>
+                    <Text className="text-xl font-bold text-gray-900 mb-3">Descripción</Text>
                     <TextInput
                         className="border border-solid border-gray-300 h-full min-h-36 max-h-36 rounded p-3 bg-white"
                         placeholder="Descripción (opcional)"
@@ -161,7 +161,7 @@ export default function BookingScreen() {
 
             {availability.length > 0 && (
                 <View className="flex-1">
-                    <Text className="text-lg font-semibold mb-3">Horarios disponibles:</Text>
+                    <Text className="text-xl font-bold text-gray-900 mb-3">Horarios disponibles:</Text>
                     <FlatList
                         data={availability}
                         keyExtractor={(item) => item.id}

@@ -7,6 +7,7 @@ import { EventStatus } from "@/src/types/auth";
 import {Ionicons} from "@expo/vector-icons";
 import Entypo from '@expo/vector-icons/Entypo'
 import Loading from "@/src/components/Loading";
+import {formatDate, formatDateTime} from "@/src/utils/date";
 
 
 const PendingSessions = () => {
@@ -34,7 +35,7 @@ const PendingSessions = () => {
             if (error) throw error;
             setPendingSessions(data || []);
         } catch (error: any) {
-
+            console.error(error);
         } finally {
             setLoading(false);
         }
@@ -111,7 +112,7 @@ const PendingSessions = () => {
                                 <Ionicons name="calendar-outline" size={16} color="#6B7280" />
                                 <Text className="text-gray-600">
                                     {item?.start_time ?
-                                        new Date(item?.start_time).toLocaleString().split(', ')[0] :
+                                        formatDate(item?.start_time) :
                                         "No date"
                                     }
                                 </Text>
@@ -120,7 +121,7 @@ const PendingSessions = () => {
                                 <Ionicons name="time-outline" size={16} color="#6B7280" />
                                 <Text className="text-gray-600">
                                     {(item?.start_time && item?.end_time) ?
-                                        formatTimeRange(item?.start_time, item?.end_time) :
+                                        formatDateTime(item?.start_time, item?.end_time) :
                                         "No date"
                                     }
                                 </Text>

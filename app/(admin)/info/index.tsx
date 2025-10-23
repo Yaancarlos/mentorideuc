@@ -73,7 +73,7 @@ export default function UsersAdmin() {
 
     return (
         <View className="flex-1 bg-white pt-20 pb-5 px-5">
-            <Text className="text-lg font-bold w-full text-center mb-4">Usuarios</Text>
+            <Text className="text-xl font-bold w-full text-center mb-4">Usuarios</Text>
             <SearchFilter
                 data={users}
                 onFilteredDataChange={setFilterUsers}

@@ -1,3 +1,4 @@
+// Sunday, 05 Oct 2025
 export const formatDate = (dateString: string, includeYear: boolean = false): string => {
     if (!dateString) return "Sin fecha";
 
@@ -16,6 +17,8 @@ export const formatDate = (dateString: string, includeYear: boolean = false): st
     return date.toLocaleDateString('es-ES', options).split(" ").map(x => x.charAt(0).toUpperCase() + x.slice(1).toLowerCase()).join(" ");
 };
 
+
+// 12:00 - 14:00
 export const formatDateTime = (startTime: string, endTime: string): string => {
     if (!startTime || !endTime) return "Sin horario";
 
