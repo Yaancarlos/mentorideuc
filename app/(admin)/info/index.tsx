@@ -95,7 +95,7 @@ export default function UsersAdmin() {
                     <RefreshControl
                         refreshing={refreshing}
                         onRefresh={onRefresh}
-                        colors={['#10B981']} // Green color
+                        colors={['#10B981']}
                         tintColor={'#10B981'}
                     />
                 }

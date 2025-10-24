@@ -1,5 +1,4 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import AdminUsers from "./users";
 import {Ionicons} from "@expo/vector-icons";
 import Home from "@/app/(admin)/index";
 import Profile from "@/app/(admin)/Profile";
@@ -13,6 +12,8 @@ export default function AdminTabs() {
             screenOptions={({ route }) => ({
                 headerShown: false,
                 tabBarShowLabel: true,
+                tabBarActiveTintColor: "#a855f7",
+                tabBarInactiveTintColor: "#6b7280",
                 tabBarStyle: {
                     backgroundColor: "#FFF",
                     borderRadius: 10,

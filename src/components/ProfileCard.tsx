@@ -64,7 +64,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
             case 'student':
                 return "bg-blue-500";
             case 'tutor':
-                return "bg-green-500";
+                return "bg-green-600";
             default:
                 return "bg-gray-500";
         }
@@ -124,7 +124,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                     </View>
                     <TouchableOpacity
                         onPress={handleEditProfile}
-                        className={`${getColorEdit(item.role as string)} rounded px-7 py-3`}
+                        className={`${getColorEdit(item.role as string)} rounded-xl px-7 py-3`}
                     >
                         <Text className="text-white font-semibold">Editar Perfil</Text>
                     </TouchableOpacity>

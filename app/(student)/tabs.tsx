@@ -13,6 +13,8 @@ export default function StudentTabs() {
             screenOptions={({ route }) => ({
                 headerShown: false,
                 tabBarShowLabel: true,
+                tabBarActiveTintColor: "#3b82f6",
+                tabBarInactiveTintColor: "#6b7280",
                 tabBarStyle: {
                     backgroundColor: "#FFF",
                     borderRadius: 10,

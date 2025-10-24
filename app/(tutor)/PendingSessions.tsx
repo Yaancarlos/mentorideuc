@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { respondToBooking } from "@/lib/api/caledar";
-import {View, Text, ActivityIndicator, FlatList, TouchableOpacity, Alert} from 'react-native';
+import {View, Text, ActivityIndicator, FlatList, TouchableOpacity, Alert, RefreshControl} from 'react-native';
 import { supabase } from "@/lib/supabase";
 import { useCurrentUser } from "@/lib/hooks";
 import { EventStatus } from "@/src/types/auth";
@@ -11,9 +11,15 @@ import {formatDate, formatDateTime} from "@/src/utils/date";
 
 
 const PendingSessions = () => {
-    const { profile,loading: profileLoading } = useCurrentUser();
+    const { profile } = useCurrentUser();
     const [pendingSessions, setPendingSessions] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        getPendingSession();
+    };
 
     useEffect(() => {
         if (profile?.id) {
@@ -38,6 +44,7 @@ const PendingSessions = () => {
             console.error(error);
         } finally {
             setLoading(false);
+            setRefreshing(false);
         }
     }
 
@@ -81,7 +88,7 @@ const PendingSessions = () => {
         }
     }
 
-    if (loading || profileLoading) {
+    if (loading && !refreshing) {
         return <Loading />;
     }
 
@@ -91,6 +98,14 @@ const PendingSessions = () => {
             <FlatList
                 data={pendingSessions}
                 keyExtractor={(item) => item.id}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        colors={['#10B981']}
+                        tintColor={'#10B981'}
+                    />
+                }
                 contentContainerStyle={{
                     flexGrow: 1,
                 }}
@@ -129,13 +144,13 @@ const PendingSessions = () => {
                         </View>
                         <View className="flex mt-5 flex-row gap-5">
                             <TouchableOpacity
-                                className="rounded p-3 grow bg-white border border-solid border-blue-500"
+                                className="rounded-xl p-3 grow bg-white border border-solid border-green-600"
                                 onPress={() => handlePending(item.id, false)}
                             >
-                                <Text className="text-blue-500 font-semibold text-center text-base">Cancelar</Text>
+                                <Text className="text-green-600 font-semibold text-center text-base">Cancelar</Text>
                             </TouchableOpacity>
                             <TouchableOpacity
-                                className="rounded p-3 grow bg-blue-500"
+                                className="rounded-xl p-3 grow bg-green-600"
                                 onPress={() => handlePending(item.id, true)}
                             >
                                 <Text className="text-white text-center font-semibold text-base">Reservar</Text>

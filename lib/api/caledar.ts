@@ -45,8 +45,6 @@ export async function respondToBooking(eventId: string, accept: boolean) {
         if (error) throw error;
 
         if (accept && updatedEvent) {
-            console.log("UPDATEDEVENT", updatedEvent);
-
             const { data, error: repoError } = await supabase
                 .from("repository")
                 .insert({
@@ -108,9 +106,6 @@ export async function bookEvent(eventId: string, studentId: string, title: strin
 
 
 export async function cancelEvent(eventId: string, userId: string) {
-    console.log('cancelEvent called with:', { eventId, userId });
-
-
     const { data, error } = await supabase
         .from("calendar_events")
         .update({

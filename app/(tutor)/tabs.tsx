@@ -16,6 +16,8 @@ export default function TutorTabs() {
             screenOptions={({ route }) => ({
                 headerShown: false,
                 tabBarShowLabel: true,
+                tabBarActiveTintColor: "#16a34a",
+                tabBarInactiveTintColor: "#6b7280",
                 tabBarStyle: {
                     backgroundColor: "#FFF",
                     borderRadius: 10,

@@ -142,10 +142,18 @@ export default function MyCalendarScreen() {
                 return;
             }
 
-            setLoading(true);
-            await cancelEvent(eventId, profileId);
-            Alert.alert("Éxito", "Evento cancelado");
-            loadEvents();
+            Alert.alert(
+                "Eliminar",
+                `¿Seguro que quieres cancelar esta sesión?`,
+                [
+                    { text: "Salir", style: "cancel" },
+                    { text: "Cancelar Sesión", style: "destructive", onPress: async () => {
+                            setLoading(true);
+                            await cancelEvent(eventId, profileId);
+                            loadEvents();
+                        }},
+                ]
+            );
         } catch (error: any) {
             Alert.alert("Error", error.message);
         } finally {
@@ -161,7 +169,7 @@ export default function MyCalendarScreen() {
         <View className="flex-1 bg-white pt-20 px-5">
             {profile?.role === "tutor" && (
                 <View className="mb-6">
-                    <Text className="text-2xl font-bold text-gray-900 mb-6">Agregar Nueva Sesión</Text>
+                    <Text className="text-2xl font-bold text-center text-gray-900 mb-6">Agregar Nueva Sesión</Text>
 
                     <View className="mb-6">
                         <Text className="text-lg font-semibold text-gray-800 mb-3">Selecciona el dia</Text>
@@ -183,34 +191,37 @@ export default function MyCalendarScreen() {
                     </View>
 
                     <View className="mb-6">
-                        <Text className="text-lg font-semibold text-gray-800 mb-3">Selecciona la hora</Text>
-
                         <View className="flex-row gap-3">
-                            <TouchableOpacity
-                                className="flex-1 border-2 border-gray-300 rounded-xl p-4 bg-white flex-row items-center justify-between"
-                                onPress={() => openTimePicker(true)}
-                            >
-                                <View className="flex-row items-center">
-                                    <Ionicons name="time-outline" size={20} color="#6B7280" />
-                                    <Text className="text-gray-700 text-base ml-2">
-                                        {formatDisplayTime(startDate)}
-                                    </Text>
-                                </View>
-                                <Ionicons name="chevron-down" size={20} color="#6B7280" />
-                            </TouchableOpacity>
-
-                            <TouchableOpacity
-                                className="flex-1 border-2 border-gray-300 rounded-xl p-4 bg-white flex-row items-center justify-between"
-                                onPress={() => openTimePicker(false)}
-                            >
-                                <View className="flex-row items-center">
-                                    <Ionicons name="time-outline" size={20} color="#6B7280" />
-                                    <Text className="text-gray-700 text-base ml-2">
-                                        {formatDisplayTime(endDate)}
-                                    </Text>
-                                </View>
-                                <Ionicons name="chevron-down" size={20} color="#6B7280" />
-                            </TouchableOpacity>
+                            <View className="flex-1">
+                                <Text className="text-lg font-semibold text-gray-800 mb-3">Hora de inicio</Text>
+                                <TouchableOpacity
+                                    className="border-2 border-gray-300 rounded-xl p-4 bg-white flex-row items-center justify-between"
+                                    onPress={() => openTimePicker(true)}
+                                >
+                                    <View className="flex-row items-center">
+                                        <Ionicons name="time-outline" size={20} color="#6B7280" />
+                                        <Text className="text-gray-700 text-base ml-2">
+                                            {formatDisplayTime(startDate)}
+                                        </Text>
+                                    </View>
+                                    <Ionicons name="chevron-down" size={20} color="#6B7280" />
+                                </TouchableOpacity>
+                            </View>
+                            <View className="flex-1">
+                                <Text className="text-lg font-semibold text-gray-800 mb-3">Hora de fin</Text>
+                                <TouchableOpacity
+                                    className="border-2 border-gray-300 rounded-xl p-4 bg-white flex-row items-center justify-between"
+                                    onPress={() => openTimePicker(false)}
+                                >
+                                    <View className="flex-row items-center">
+                                        <Ionicons name="time-outline" size={20} color="#6B7280" />
+                                        <Text className="text-gray-700 text-base ml-2">
+                                            {formatDisplayTime(endDate)}
+                                        </Text>
+                                    </View>
+                                    <Ionicons name="chevron-down" size={20} color="#6B7280" />
+                                </TouchableOpacity>
+                            </View>
                         </View>
                     </View>
 
@@ -286,12 +297,12 @@ export default function MyCalendarScreen() {
                     </Modal>
 
                     <TouchableOpacity
-                        className="bg-blue-600 rounded-xl p-4 shadow-lg"
+                        className="bg-blue-600 rounded-xl p-4"
                         onPress={addEvent}
                         disabled={loading}
                     >
                         <Text className="text-white text-center font-bold text-lg">
-                            {loading ? "Creando..." : "Agregar Horario"}
+                            {loading ? "Creando..." : "Agregar"}
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -327,8 +338,8 @@ export default function MyCalendarScreen() {
                                 </View>
 
                                 <View className="items-end">
-                                    <View className="bg-green-100 px-3 py-1 rounded-full mb-2">
-                                        <Text className="text-green-800 font-semibold text-xs">
+                                    <View className="py-1 rounded-full mb-2">
+                                        <Text className="text-blue-700 font-semibold text-xs">
                                             {item?.status === EventStatus.AVAILABLE ? "Disponible" : "Ocupado"}
                                         </Text>
                                     </View>
@@ -336,7 +347,6 @@ export default function MyCalendarScreen() {
                                         className="bg-red-500 rounded-lg px-4 py-2 flex-row items-center"
                                         onPress={() => handleCancel(item.id, profile?.id as string)}
                                     >
-                                        <Ionicons name="close-circle" size={16} color="white" />
                                         <Text className="font-semibold text-white text-sm ml-1">Cancelar</Text>
                                     </TouchableOpacity>
                                 </View>

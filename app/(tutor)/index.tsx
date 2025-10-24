@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, TouchableOpacity, Alert, ScrollView} from 'react-native';
+import {View, Text, TouchableOpacity, Alert, ScrollView, RefreshControl} from 'react-native';
 import {supabase} from "@/lib/supabase";
 import {useCurrentUser} from "@/lib/hooks";
 import Loading from "@/src/components/Loading";
@@ -25,6 +25,13 @@ export default function TutorDashboard() {
     const [pendingSessions, setPendingSessions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [repositories, setRepositories] = useState<any[]>([]);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        loadRepositories();
+        getPendingSession()
+    };
 
     useEffect(() => {
         if (profile?.id) {
@@ -72,6 +79,7 @@ export default function TutorDashboard() {
             Alert.alert("Error", error.message);
         } finally {
             setLoading(false);
+            setRefreshing(false);
         }
     }
 
@@ -90,6 +98,7 @@ export default function TutorDashboard() {
             console.log(error);
         } finally {
             setLoading(false);
+            setRefreshing(false)
         }
     }
 
@@ -127,7 +136,7 @@ export default function TutorDashboard() {
         Alert.alert("Informacion", "Ve a la seccion 'Agenda' para ver todas las opciones")
     }
 
-    if (loading) {
+    if (loading && !refreshing) {
         return <Loading />
     }
 
@@ -159,7 +168,17 @@ export default function TutorDashboard() {
                 name={profile?.name as string}
                 role={profile?.role as string}
             />
-            <ScrollView className="p-5">
+            <ScrollView
+                className="p-5"
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        colors={['#10B981']}
+                        tintColor={'#10B981'}
+                    />
+                }
+            >
                 <View>
                     {infoCards.map((card, index) => (
                         <InfoCard
@@ -212,13 +231,13 @@ export default function TutorDashboard() {
                                 </View>
                                 <View className="flex mt-5 flex-row gap-5">
                                     <TouchableOpacity
-                                        className="rounded p-3 grow bg-white border border-solid border-blue-500"
+                                        className="rounded-xl p-3 grow bg-white border border-solid border-green-600"
                                         onPress={() => handlePending(item.id, false)}
                                     >
-                                        <Text className="text-blue-500 font-semibold text-center text-base">Cancelar</Text>
+                                        <Text className="text-green-600 font-semibold text-center text-base">Cancelar</Text>
                                     </TouchableOpacity>
                                     <TouchableOpacity
-                                        className="rounded p-3 grow bg-blue-500"
+                                        className="rounded-xl p-3 grow bg-green-600"
                                         onPress={() => handlePending(item.id, true)}
                                     >
                                         <Text className="text-white text-center font-semibold text-base">Reservar</Text>

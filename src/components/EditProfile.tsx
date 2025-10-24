@@ -111,7 +111,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({ user, onSave, onCance
                     <View>
                         <Text className="text-gray-700 text-xl font-semibold mb-2">Nombre</Text>
                         <TextInput
-                            className="border border-gray-300 rounded-lg px-4 py-2 text-lg"
+                            className="border border-gray-300 rounded-xl px-4 py-2"
                             value={formData.name}
                             onChangeText={(text) => setFormData(prev => ({ ...prev, name: text }))}
                             placeholder="Ingresa tu nombre"
@@ -141,9 +141,22 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({ user, onSave, onCance
                             style={{
                                 borderColor: '#d1d5db',
                                 borderWidth: 1,
+                                borderRadius: 12,
                             }}
                             dropDownContainerStyle={{
                                 borderColor: '#d1d5db',
+                            }}
+                            textStyle={{
+                                fontSize: 16,
+                            }}
+                            labelStyle={{
+                                fontSize: 16,
+                            }}
+                            placeholderStyle={{
+                                fontSize: 16,
+                            }}
+                            listItemLabelStyle={{
+                                fontSize: 16,
                             }}
                         />
                     </View>
@@ -152,7 +165,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({ user, onSave, onCance
 
                 <View className="flex-row gap-5 mt-8">
                     <TouchableOpacity
-                        className="grow bg-gray-400 rounded-lg py-3"
+                        className="grow bg-gray-400 rounded-xl py-3"
                         onPress={handleCancel}
                         disabled={loading}
                     >
@@ -162,7 +175,7 @@ const EditProfileForm: React.FC<EditProfileFormProps> = ({ user, onSave, onCance
                     </TouchableOpacity>
 
                     <TouchableOpacity
-                        className="grow bg-green-600 rounded-lg py-3"
+                        className="grow bg-green-600 rounded-xl py-3"
                         onPress={handleSave}
                         disabled={loading}
                     >

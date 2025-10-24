@@ -100,7 +100,6 @@ export async function deleteUser(id: string) {
     const { error: authError } = await supabase.auth.admin.deleteUser(id);
 
     if (authError) {
-        console.warn("DELETING USER JUST IN PROFILE TABLE");
         const { error: profileError } = await supabase
             .from("profiles")
             .delete()
@@ -148,7 +147,7 @@ export async function cleanUserCache(userId: string) {
                     .remove(filePaths);
 
                 if (storageError) {
-                    console.warn(`Could not delete storage files for repo ${repository.id}:`, storageError);
+                    console.error(`Could not delete storage files for repo ${repository.id}:`, storageError);
                 }
             }
         }

@@ -1,13 +1,19 @@
-import { useEffect, useState } from "react";
-import { View, Text, ActivityIndicator, Alert, ScrollView, TouchableOpacity, TextInput } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+    View,
+    Text,
+    Alert,
+    ScrollView,
+    TouchableOpacity,
+    TextInput,
+    RefreshControl
+} from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
 import { uploadRepositoryFile, getRepositoryFiles, deleteRepositoryFile, getRepositoryFeedback, addFeedback } from "@/lib/api/caledar";
 import * as DocumentPicker from "expo-document-picker";
 import { supabase } from "@/lib/supabase";
 import { useCurrentUser } from "@/lib/hooks";
-import AntDesign from '@expo/vector-icons/AntDesign';
-import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Loading from "@/src/components/Loading";
 import MessageSection from "@/src/components/Message";
 
@@ -21,6 +27,13 @@ export default function RepositoryDetailTutorScreen() {
     const [files, setFiles] = useState<any[]>([]);
     const [uploading, setUploading] = useState(false);
     const [status, setStatus] = useState("");
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        loadRepositoryFiles();
+        loadFeedback();
+    };
 
     useEffect(() => {
         if (id) {
@@ -98,6 +111,7 @@ export default function RepositoryDetailTutorScreen() {
             console.error("Error loading repository:", error);
         } finally {
             setLoading(false);
+            setRefreshing(false);
         }
     }
 
@@ -110,6 +124,7 @@ export default function RepositoryDetailTutorScreen() {
             console.error("Error cargando feedback: ", error);
         } finally {
             setLoading(false);
+            setRefreshing(false);
         }
     }
 
@@ -121,9 +136,7 @@ export default function RepositoryDetailTutorScreen() {
 
         try {
             setLoading(true);
-
             const response = await addFeedback(id as string, feedBackUser, profile?.id as string, profile?.role as string);
-
             setFeedBackUser("");
             await loadRepository();
         } catch (error: any) {
@@ -227,14 +240,22 @@ export default function RepositoryDetailTutorScreen() {
         return;
     }
 
-    if (loading) {
-        return (
-            <Loading />
-        );
+    if (loading && !refreshing) {
+        return <Loading />
     }
 
     return (
-        <ScrollView className="flex-1 pt-14 bg-white">
+        <ScrollView
+            className="flex-1 pt-14 bg-white"
+            refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    colors={['#10B981']}
+                    tintColor={'#10B981'}
+                />
+            }
+        >
             <View className="px-6 py-8">
                 <Text className="text-2xl font-bold w-full text-center text-gray-900 mb-8">
                     {repository?.title || "Sin titulo"}
