@@ -107,15 +107,28 @@ export async function bookEvent(eventId: string, studentId: string, title: strin
 }
 
 
-export async function cancelEvent(eventId: string, tutorId: string) {
+export async function cancelEvent(eventId: string, userId: string) {
+    console.log('cancelEvent called with:', { eventId, userId });
+
+
     const { data, error } = await supabase
         .from("calendar_events")
-        .update({ status: EventStatus.CANCELED })
+        .update({
+            status: EventStatus.CANCELED
+        })
         .eq("id", eventId)
-        .eq("tutor_id", tutorId)
+        .or(`student_id.eq.${userId},tutor_id.eq.${userId}`)
+        .neq("status", EventStatus.CANCELED)
         .select()
-        .maybeSingle();
-    if (error) throw error;
+        .single();
+
+    if (error) {
+        if (error.code === 'PGRST116') {
+            throw new Error("Event not found or you don't have permission to cancel it");
+        }
+        throw error;
+    }
+
     return data;
 }
 

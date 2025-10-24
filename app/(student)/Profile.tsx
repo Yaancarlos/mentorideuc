@@ -121,6 +121,7 @@ const Profile = () => {
                             throw new Error(error.message || 'Error al actualizar el usuario');
                         } finally {
                             setLoading(false);
+
                         }
                     }
                 }

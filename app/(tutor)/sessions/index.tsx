@@ -1,15 +1,12 @@
-import {useEffect, useState} from "react";
-import {ActivityIndicator, Alert, FlatList, Text, TouchableOpacity, View, TextInput, Modal} from "react-native";
+import React, {useEffect, useState} from "react";
+import {Alert, FlatList, RefreshControl, Text, View} from "react-native";
 import {router} from "expo-router";
 import {Ionicons} from '@expo/vector-icons';
 import {supabase} from "@/lib/supabase";
 import {useCurrentUser} from "@/lib/hooks";
 import {cancelEvent} from "@/lib/api/caledar";
-import {formatDate, formatDateTime} from "@/src/utils/date";
-import {getSessionColor} from "@/src/utils/tagColors";
 import SearchFilter from "@/src/components/Search";
 import SessionCard from "@/src/components/SessionCard";
-import {ALLOWED_PROPS} from "react-native-gesture-handler/lib/typescript/handlers/gestures/GestureDetector/utils";
 import Loading from "@/src/components/Loading";
 
 export default function SessionsListScreenTutor() {
@@ -17,12 +14,20 @@ export default function SessionsListScreenTutor() {
     const [repositories, setRepositories] = useState<any[]>([]);
     const [filteredRepositories, setFilteredRepositories] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
+
 
     useEffect(() => {
         if (profile?.id && profile?.role === "tutor") {
             loadRepositories();
         }
     }, [profile?.id]);
+
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        loadRepositories();
+    };
 
     async function loadRepositories() {
         try {
@@ -62,6 +67,7 @@ export default function SessionsListScreenTutor() {
             Alert.alert("Error", error.message);
         } finally {
             setLoading(false);
+            setRefreshing(false);
         }
     }
 
@@ -104,10 +110,8 @@ export default function SessionsListScreenTutor() {
         );
     }
 
-    if (loading || loadingUser) {
-        return (
-            <Loading />
-        );
+    if (loading && !refreshing) {
+        return <Loading />
     }
 
     return (
@@ -130,6 +134,14 @@ export default function SessionsListScreenTutor() {
                     flexGrow: 1,
                 }}
                 keyExtractor={(item) => item.id}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        colors={['#10B981']}
+                        tintColor={'#10B981'}
+                    />
+                }
                 renderItem={({ item }) => (
                     <SessionCard
                         item={item}

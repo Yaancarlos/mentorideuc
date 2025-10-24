@@ -60,6 +60,11 @@ export const DashboardHeader: React.FC<HeaderProps> = ({
         }
     }
 
+    const routerEdit = () => {
+        // @ts-ignore
+        router.push(`/(${role})/Profile`)
+    }
+
 
     return (
         <View className="flex-row items-center justify-between p-5">
@@ -87,7 +92,7 @@ export const DashboardHeader: React.FC<HeaderProps> = ({
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                    onPress={() => router.push(`/(${role})/Profile`)}
+                    onPress={routerEdit}
                     className="w-12 h-12 bg-white border border-gray-300 rounded-full items-center justify-center">
                     <Settings size={24} color="#374151" />
                 </TouchableOpacity>

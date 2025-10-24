@@ -112,7 +112,7 @@ const MessageSection: React.FC<MessageSectionProps> = ({
                 return (
                     <View
                         key={element.id}
-                        className="flex flex-col w-full"
+                        className="flex border border-transparent flex-col w-full"
                     >
                         <View className={`flex gap-2 mb-2 items-center ${alignment} ${styles.messageContainer || ''}`}>
                             <Text className={`text-gray-800 w-auto max-w-72 text-base rounded-xl ${border} px-3 py-1 bg-white shadow-sm ${

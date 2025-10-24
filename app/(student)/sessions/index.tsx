@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, FlatList, ActivityIndicator, Alert, TouchableOpacity } from "react-native";
+import {View, Text, FlatList, ActivityIndicator, Alert, TouchableOpacity, RefreshControl} from "react-native";
 import { router } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from "@/lib/supabase";
@@ -16,12 +16,18 @@ export default function SessionsListScreen() {
     const [repositories, setRepositories] = useState<any[]>([]);
     const [filteredRepositories, setFilteredRepositories] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
 
     useEffect(() => {
         if (profile?.id) {
             loadRepositories();
         }
     }, [profile?.id]);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        loadRepositories();
+    };
 
     async function loadRepositories() {
         try {
@@ -61,15 +67,15 @@ export default function SessionsListScreen() {
             Alert.alert("Error", error.message);
         } finally {
             setLoading(false);
+            setRefreshing(false);
         }
     }
 
     async function handleDeleteSession(eventId: string, profile: string) {
         try {
             setLoading(true);
-
+            console.log(eventId, profile);
             await cancelEvent(eventId, profile);
-
             Alert.alert("Sesion eliminada");
             loadRepositories();
         } catch (error: any) {
@@ -97,16 +103,13 @@ export default function SessionsListScreen() {
                         if (item.status === 'booked' && item.repository?.id) {
                             handleCardPress(item);
                         }
-                    }},
-                { text: "Cancelar Sesión", style: "destructive", onPress: () => {handleDeleteSession(item?.id, profile?.id as string)} },
+                }}
             ]
         );
     }
 
-    if (loading) {
-        return (
-            <Loading />
-        );
+    if (loading && !refreshing) {
+        return <Loading />
     }
 
     return (
@@ -129,6 +132,14 @@ export default function SessionsListScreen() {
                 }}
                 data={filteredRepositories}
                 keyExtractor={(item) => item.id}
+                refreshControl={
+                    <RefreshControl
+                        refreshing={refreshing}
+                        onRefresh={onRefresh}
+                        colors={['#10B981']}
+                        tintColor={'#10B981'}
+                    />
+                }
                 renderItem={({ item }) => (
                     <SessionCard
                         item={item}

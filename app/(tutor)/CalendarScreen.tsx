@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Alert, FlatList, Platform, Text, TouchableOpacity, View} from "react-native";
+import {Alert, FlatList, Modal, Platform, Text, TouchableOpacity, View} from "react-native";
 import {cancelEvent, createEvent} from "@/lib/api/caledar";
 import {supabase} from "@/lib/supabase";
 import {useCurrentUser} from "@/lib/hooks";
@@ -17,8 +17,9 @@ export default function MyCalendarScreen() {
 
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
-    const [showStartPicker, setShowStartPicker] = useState(false);
-    const [showEndPicker, setShowEndPicker] = useState(false);
+    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [showTimePicker, setShowTimePicker] = useState(false);
+    const [pickingStart, setPickingStart] = useState(true);
 
     useEffect(() => {
         const now = new Date();
@@ -28,26 +29,59 @@ export default function MyCalendarScreen() {
         setEndDate(oneHourLater);
     }, []);
 
-    const onStartChange = (event: any, selectedDate?: Date) => {
+    const openDatePicker = (isStart: boolean) => {
+        setPickingStart(isStart);
+        setShowDatePicker(true);
+    };
+
+    const openTimePicker = (isStart: boolean) => {
+        setPickingStart(isStart);
+        setShowTimePicker(true);
+    };
+
+    const handleDateChange = (event:any, selectedDate:any) => {
+        setShowDatePicker(false);
         if (selectedDate) {
-            setStartDate(selectedDate);
-            if (endDate < selectedDate) {
-                setEndDate(selectedDate);
+            const updatedDate = new Date(selectedDate);
+            updatedDate.setHours(startDate.getHours());
+            updatedDate.setMinutes(startDate.getMinutes());
+            setStartDate(updatedDate);
+            setEndDate(new Date(updatedDate.getTime() + 60 * 60 * 1000));
+        }
+    };
+
+    const handleTimeChange = (event: any, selectedTime?: Date) => {
+        setShowTimePicker(false);
+        if (selectedTime) {
+            const currentDate = pickingStart ? startDate : endDate;
+            const updatedDate = new Date(currentDate);
+            updatedDate.setHours(selectedTime.getHours());
+            updatedDate.setMinutes(selectedTime.getMinutes());
+
+            if (pickingStart) {
+                setStartDate(updatedDate);
+                // Auto-adjust end time if it becomes invalid
+                if (endDate < updatedDate) {
+                    const newEndDate = new Date(updatedDate.getTime() + 60 * 60 * 1000);
+                    setEndDate(newEndDate);
+                }
+            } else {
+                setEndDate(updatedDate);
             }
         }
     };
 
-    const onEndChange = (event: any, selectedDate?: Date) => {
-        if (selectedDate) {
-            setEndDate(selectedDate);
-        }
+    const formatDisplayDate = (date: Date) => {
+        return date.toLocaleDateString('es-ES', {
+            weekday: 'long',
+            day: '2-digit',
+            month: 'long',
+            year: 'numeric'
+        });
     };
 
-    const formatDisplayDate = (date: Date) => {
-        return date.toLocaleString('es-ES', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
+    const formatDisplayTime = (date: Date) => {
+        return date.toLocaleTimeString('es-ES', {
             hour: '2-digit',
             minute: '2-digit'
         });
@@ -128,83 +162,141 @@ export default function MyCalendarScreen() {
             {profile?.role === "tutor" && (
                 <View className="mb-6">
                     <Text className="text-2xl font-bold text-gray-900 mb-6">Agregar Nueva Sesión</Text>
-                    <View className="space-y-4">
-                        <View>
-                            <Text className="text-lg font-semibold text-gray-800 mb-2">Fecha de Inicio</Text>
 
+                    <View className="mb-6">
+                        <Text className="text-lg font-semibold text-gray-800 mb-3">Selecciona el dia</Text>
+
+                        <View className="flex-row">
                             <TouchableOpacity
-                                className="border-2 border-gray-300 rounded-xl p-4 bg-white flex-row items-center justify-between"
-                                onPress={() => setShowStartPicker(true)}
+                                className="flex-1 border-2 border-gray-300 rounded-xl p-4 bg-white flex-row items-center justify-between"
+                                onPress={() => openDatePicker(true)}
                             >
                                 <View className="flex-row items-center">
                                     <Ionicons name="calendar-outline" size={20} color="#6B7280" />
-                                    <Text className="text-gray-700 text-lg ml-2">
-                                        {startDate.toLocaleDateString("es-ES")}
+                                    <Text className="text-gray-700 text-base ml-2">
+                                        {formatDisplayDate(startDate)}
                                     </Text>
                                 </View>
                                 <Ionicons name="chevron-down" size={20} color="#6B7280" />
                             </TouchableOpacity>
+                        </View>
+                    </View>
 
-                            {showStartPicker && (
-                                <DateTimePicker
-                                    value={startDate}
-                                    mode="date"
-                                    display={Platform.OS === "ios" ? "inline" : "calendar"}
-                                    minimumDate={new Date()}
-                                    onChange={(event, selectedDate) => {
-                                        if (selectedDate) {
-                                            const updatedDate = new Date(selectedDate);
-                                            updatedDate.setHours(startDate.getHours());
-                                            updatedDate.setMinutes(startDate.getMinutes());
-                                            setStartDate(updatedDate);
-                                        }
-                                        setShowStartPicker(false);
-                                    }}
-                                />
-                            )}
+                    <View className="mb-6">
+                        <Text className="text-lg font-semibold text-gray-800 mb-3">Selecciona la hora</Text>
 
+                        <View className="flex-row gap-3">
                             <TouchableOpacity
-                                className="border-2 border-gray-300 rounded-xl p-4 bg-white flex-row items-center justify-between mt-3"
-                                onPress={() => setShowEndPicker(true)}
+                                className="flex-1 border-2 border-gray-300 rounded-xl p-4 bg-white flex-row items-center justify-between"
+                                onPress={() => openTimePicker(true)}
                             >
                                 <View className="flex-row items-center">
                                     <Ionicons name="time-outline" size={20} color="#6B7280" />
-                                    <Text className="text-gray-700 text-lg ml-2">
-                                        {startDate.toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" })}
+                                    <Text className="text-gray-700 text-base ml-2">
+                                        {formatDisplayTime(startDate)}
                                     </Text>
                                 </View>
                                 <Ionicons name="chevron-down" size={20} color="#6B7280" />
                             </TouchableOpacity>
 
-                            {showEndPicker && (
-                                <DateTimePicker
-                                    value={startDate}
-                                    mode="time"
-                                    display="spinner"
-                                    onChange={(event, selectedTime) => {
-                                        if (selectedTime) {
-                                            const updatedDate = new Date(startDate);
-                                            updatedDate.setHours(selectedTime.getHours());
-                                            updatedDate.setMinutes(selectedTime.getMinutes());
-                                            setStartDate(updatedDate);
-                                        }
-                                        setShowEndPicker(false);
-                                    }}
-                                />
-                            )}
+                            <TouchableOpacity
+                                className="flex-1 border-2 border-gray-300 rounded-xl p-4 bg-white flex-row items-center justify-between"
+                                onPress={() => openTimePicker(false)}
+                            >
+                                <View className="flex-row items-center">
+                                    <Ionicons name="time-outline" size={20} color="#6B7280" />
+                                    <Text className="text-gray-700 text-base ml-2">
+                                        {formatDisplayTime(endDate)}
+                                    </Text>
+                                </View>
+                                <Ionicons name="chevron-down" size={20} color="#6B7280" />
+                            </TouchableOpacity>
                         </View>
-                        <TouchableOpacity
-                            className="bg-blue-600 rounded-xl p-4 mt-2 shadow-lg"
-                            onPress={addEvent}
-                            disabled={loading}
-                        >
-                            <Text className="text-white text-center font-bold text-lg">
-                                {loading ? "Creando..." : "Agregar Horario"}
-                            </Text>
-                        </TouchableOpacity>
                     </View>
+
+                    <Modal
+                        visible={showDatePicker}
+                        transparent={true}
+                        animationType="fade"
+                    >
+                        <View className="flex-1 justify-center items-center bg-black/50">
+                            <View className="bg-gray-950 rounded-2xl p-6 mx-4 w-11/12">
+                                <Text className="text-xl font-bold text-white mb-4 text-center">
+                                    Seleccionar Fecha
+                                </Text>
+                                <View className="flex-grow items-center justify-center py-2">
+                                    <DateTimePicker
+                                        value={pickingStart ? startDate : endDate}
+                                        mode="date"
+                                        display={Platform.OS === "ios" ? "inline" : "calendar"}
+                                        minimumDate={new Date()}
+                                        onChange={handleDateChange}
+                                        style={{
+                                            backgroundColor: '#030712',
+                                            borderRadius: 8,
+                                        }}
+                                    />
+                                </View>
+                                <TouchableOpacity
+                                    className="bg-white rounded-xl p-4 mt-4"
+                                    onPress={() => setShowDatePicker(false)}
+                                >
+                                    <Text className="text-gray-950 text-center font-bold text-lg">
+                                        Cerrar
+                                    </Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Modal>
+
+                    <Modal
+                        visible={showTimePicker}
+                        transparent={true}
+                        animationType="fade"
+                    >
+                        <View className="flex-1 justify-center items-center bg-black/50">
+                            <View className="bg-gray-950 rounded-2xl mx-4 w-11/12">
+                                <Text className="text-xl font-bold p-6 text-white text-center">
+                                    Seleccionar Hora
+                                </Text>
+                                <View className="flex-grow items-center justify-center py-2">
+                                    <DateTimePicker
+                                        value={pickingStart ? startDate : endDate}
+                                        mode="time"
+                                        display="spinner"
+                                        onChange={handleTimeChange}
+                                        style={{
+                                            backgroundColor: '#030712',
+                                            borderRadius: 8,
+                                        }}
+                                    />
+                                </View>
+                                <View className="p-6">
+                                    <TouchableOpacity
+                                        className="bg-white rounded-xl p-4"
+                                        onPress={() => setShowTimePicker(false)}
+                                    >
+                                        <Text className="text-gray-950 text-center font-bold text-lg">
+                                            Cerrar
+                                        </Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        </View>
+                    </Modal>
+
+                    <TouchableOpacity
+                        className="bg-blue-600 rounded-xl p-4 shadow-lg"
+                        onPress={addEvent}
+                        disabled={loading}
+                    >
+                        <Text className="text-white text-center font-bold text-lg">
+                            {loading ? "Creando..." : "Agregar Horario"}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
             )}
+
             <View className="flex-1">
                 <Text className="text-xl font-bold text-gray-900 mb-4">Mis Horarios Disponibles</Text>
                 <FlatList
