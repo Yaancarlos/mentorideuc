@@ -73,7 +73,7 @@ export default function UsersAdmin() {
 
     return (
         <View className="flex-1 bg-white pt-20 pb-5 px-5">
-            <Text className="text-xl font-bold w-full text-center mb-4">Usuarios</Text>
+            <Text className="text-2xl text-center font-semibold text-gray-900 mb-5">Usuarios</Text>
             <SearchFilter
                 data={users}
                 onFilteredDataChange={setFilterUsers}
@@ -82,8 +82,8 @@ export default function UsersAdmin() {
                     repositoryStatus: false,
                     sessionStatus: false
                 }}
-                placeholder="Buscar sesiones..."
-                emptyMessage="No se encontraron sesiones"
+                placeholder="Buscar Usuarios..."
+                emptyMessage="No se encontraron usuarios"
             />
             <FlatList
                 contentContainerStyle={{

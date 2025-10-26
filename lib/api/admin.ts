@@ -170,3 +170,43 @@ export async function cleanUserCache(userId: string) {
     return { success: true };
 }
 
+export async function getCareers() {
+    const { data: careersData, error: careersError } = await supabase
+        .from("careers")
+        .select("*")
+        .order("name", { ascending: true });
+
+    if (careersError) {
+        console.error('Supabase error:', careersError);
+        throw new Error(careersError.message);
+    }
+
+    if (!careersData) {
+        throw new Error('No careers data received');
+    }
+
+    return careersData;
+}
+
+export async function createCareer(careerData: any) {
+    const { data, error } = await supabase
+        .from('careers')
+        .insert([careerData])
+        .select()
+        .single();
+
+    if (error) throw error;
+    return data;
+}
+
+export async function getFaculties() {
+    return [
+        'Ingeniería',
+        'Ciencias de la Salud',
+        'Ciencias Sociales',
+        'Negocios',
+        'Artes y Humanidades',
+        'Ciencias Básicas'
+    ];
+}
+

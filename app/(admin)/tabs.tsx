@@ -3,6 +3,7 @@ import {Ionicons} from "@expo/vector-icons";
 import Home from "@/app/(admin)/index";
 import Profile from "@/app/(admin)/Profile";
 import UsersAdmin from "@/app/(admin)/info/index";
+import Careers from "@/app/(admin)/Careers";
 
 const Tab = createBottomTabNavigator();
 
@@ -37,6 +38,8 @@ export default function AdminTabs() {
                         iconName = focused ? 'people' : 'people-outline';
                     } else if (route.name === 'Perfil') {
                         iconName = focused ? 'person' : 'person-outline';
+                    } else if (route.name === 'Carreras') {
+                        iconName = focused ? 'school' : 'school-outline';
                     }
 
                     // @ts-ignore
@@ -46,6 +49,7 @@ export default function AdminTabs() {
         >
             <Tab.Screen name="Inicio" component={Home} />
             <Tab.Screen name="Usuarios" component={UsersAdmin} />
+            <Tab.Screen name="Carreras" component={Careers} />
             <Tab.Screen name="Perfil" component={Profile} />
         </Tab.Navigator>
     );

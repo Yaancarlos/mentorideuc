@@ -4,6 +4,9 @@ import {View, Text, Alert, TouchableOpacity, FlatList, ScrollView, Image} from '
 import useAuth from "@/src/components/Auth";
 import {router} from "expo-router";
 import Feather from "@expo/vector-icons/Feather";
+import AddUserForm from '@/src/components/AddUserForm';
+import AddCareerForm from '@/src/components/AddCareerForm';
+
 
 interface ProfileCardProps {
     item: {
@@ -34,6 +37,8 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                                                     onSignOut,
                                                     options = {}
                                                  }) => {
+    const [showUserForm, setShowUserForm] = useState(false);
+    const [showCareerForm, setShowCareerForm] = useState(false);
     const { signOut } = useAuth();
 
     const handleEditProfile = () => {
@@ -136,6 +141,30 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                         <>
                             <TouchableOpacity
                                 className="flex gap-3 justify-between flex-row"
+                                onPress={() => setShowUserForm(true)}
+                            >
+                                <View className="flex flex-row gap-5 items-center">
+                                    <Feather name="user" color="#111827" size={24} />
+                                    <Text className="font-medium text-gray-700 text-xl">
+                                        Agregar Usuario
+                                    </Text>
+                                </View>
+                                <Ionicons name="chevron-forward-outline" color="#111827" size={24} />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                className="flex gap-3 justify-between flex-row"
+                                onPress={() => setShowCareerForm(true)}
+                            >
+                                <View className="flex flex-row gap-5 items-center">
+                                    <Feather name="book" color="#111827" size={24} />
+                                    <Text className="font-medium text-gray-700 text-xl">
+                                        Agregar Carrera
+                                    </Text>
+                                </View>
+                                <Ionicons name="chevron-forward-outline" color="#111827" size={24} />
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                className="flex gap-3 justify-between flex-row"
                                 onPress={handleSignOut}
                             >
                                 <View className="flex flex-row gap-5 items-center">
@@ -200,6 +229,22 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                             </TouchableOpacity>
                         </>
                     )}
+
+                    <AddUserForm
+                        visible={showUserForm}
+                        onClose={() => setShowUserForm(false)}
+                        onUserCreated={() => {
+                            console.log('User created successfully');
+                        }}
+                    />
+
+                    <AddCareerForm
+                        visible={showCareerForm}
+                        onClose={() => setShowCareerForm(false)}
+                        onCareerCreated={() => {
+                            console.log('Career created successfully');
+                        }}
+                    />
                 </View>
             </ScrollView>
         </View>

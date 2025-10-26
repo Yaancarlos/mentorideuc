@@ -112,9 +112,9 @@ const UserCard: React.FC<UserCardProps> = ({
                 </View>
             </View>
 
-            <View className="space-y-2">
-                <View>
-                    <Text className="text-sm font-semibold text-gray-700 mb-1">
+            <View>
+                <View className="mb-2">
+                    <Text className="text-base font-semibold text-gray-700">
                         Carrera
                     </Text>
                     <Text className="text-sm text-gray-600">
@@ -122,7 +122,7 @@ const UserCard: React.FC<UserCardProps> = ({
                     </Text>
                 </View>
                 <View>
-                    <Text className="text-sm font-semibold text-gray-700 mb-1">
+                    <Text className="text-base font-semibold text-gray-700">
                         Fecha de ingreso
                     </Text>
                     <Text className="text-sm text-gray-600">

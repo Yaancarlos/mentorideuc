@@ -32,3 +32,18 @@ export enum RepositoryStatus {
     APPROVED = 'approved',
     REJECTED = 'rejected'
 }
+
+export interface UserFormData {
+    email: string;
+    name: string;
+    role: UserRole;
+    password: string;
+}
+
+export interface CareerFormData {
+    name: string;
+    code: string;
+    faculty: string;
+    duration_semesters: number;
+    is_active: boolean;
+}
