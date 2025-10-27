@@ -164,6 +164,7 @@ export default function StudentDashboard() {
                     )}
                 </View>
             </ScrollView>
+            <View style={{paddingBottom: 75}}></View>
         </View>
     );
 }

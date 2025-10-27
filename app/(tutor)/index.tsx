@@ -282,6 +282,7 @@ export default function TutorDashboard() {
                         </View>
                     )}
                 </View>
+                <View style={{paddingBottom: 85}}></View>
             </ScrollView>
         </View>
     );

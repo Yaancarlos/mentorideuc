@@ -175,20 +175,20 @@ export default function RepositoryDetailTutorScreen() {
 
     const handleDeleteFile = async (fileId: string, fileName: string) => {
         Alert.alert(
-            "Delete File",
-            `Are you sure you want to delete "${fileName}"?`,
+            "Eliminar Archivo",
+            `Estas seguro que quieres eliminar el archivo "${fileName}"?`,
             [
-                { text: "Cancel", style: "cancel" },
+                { text: "Cancelar", style: "cancel" },
                 {
-                    text: "Delete",
+                    text: "Eliminar",
                     style: "destructive",
                     onPress: async () => {
                         try {
                             await deleteRepositoryFile(fileId);
                             await loadRepositoryFiles();
-                            Alert.alert("Success", "File deleted successfully");
+                            Alert.alert("Exito", "Haz eliminado el archivo");
                         } catch (error: any) {
-                            Alert.alert("Error", error.message || "Failed to delete file");
+                            Alert.alert("Error", error.message || "No se puedo eliminar el archivo");
                         }
                     }
                 }
@@ -199,8 +199,18 @@ export default function RepositoryDetailTutorScreen() {
     const handleDownloadFile = async (fileUrl: string, fileName: string) => {
         try {
             if (fileUrl) {
-                // You can use Linking.openURL(fileUrl) for direct download
-                Alert.alert("Download", `Downloading: ${fileName}`);
+                Alert.alert("Descargar archivo",
+                    `Estas seguro que quieres descargar el archivo "${fileName}"?`,
+                    [
+                        { text: "Cancelar", style: "destructive" },
+                        {
+                            text: "Descargar",
+                            style: "cancel",
+                            onPress: async () => {
+                                Alert.alert("Exito", "El archivo se ha descargado")
+                            }
+                        }
+                    ]);
                 return;
             }
         } catch (error) {

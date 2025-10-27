@@ -1,28 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import {View, Text, FlatList, RefreshControl} from 'react-native';
+import {View, Text, FlatList, RefreshControl, Alert} from 'react-native';
 import Loading from "@/src/components/Loading";
-import {getCareers} from "@/lib/api/admin";
+import {getCareers, deleteCareer, softDeleteCareer} from "@/lib/api/admin";
 import CareersCard from "@/src/components/CareersCard";
-import {Search} from "lucide-react-native";
 import SearchFilter from "@/src/components/Search";
 import Entypo from "@expo/vector-icons/Entypo";
-
-interface CareerProps {
-    id: string,
-    name: string,
-    code: string,
-    faculty: string,
-    duration_semesters: number,
-    is_active: boolean,
-    created_at: string,
-    updated_at: string
-}
+import {router} from "expo-router";
+import EditCareerModal from '@/src/components/EditCareer';
+import { CareerProps } from "@/src/types/auth";
 
 const Careers = () => {
     const [careers, setCareers] = useState<CareerProps[]>([]);
     const [loading, setLoading] = useState(true);
     const [filteredCareers, setFilteredCareers] = useState<any[]>([]);
     const [refreshing, setRefreshing] = useState(false);
+    const [editModalVisible, setEditModalVisible] = useState(false); // Add this state
+    const [selectedCareer, setSelectedCareer] = useState<CareerProps | null>(null); // Add this state
 
     const onRefresh = () => {
         setRefreshing(true);
@@ -39,6 +32,33 @@ const Careers = () => {
             setLoading(false);
             setRefreshing(false);
         }
+    }
+
+    const handleLongPress = async (career: CareerProps) => {
+        Alert.alert(
+            "Opciones",
+            `¿Qué quieres hacer con la carrera "${career.name}"?`,
+            [
+                { text: "Cancelar", style: "cancel" },
+                { text: "Ver Detalles", onPress: () => handleRedirect(career.id)},
+                {
+                    text: "Editar",
+                    style: "destructive",
+                    onPress: () => {
+                        setSelectedCareer(career);
+                        setEditModalVisible(true);
+                    }
+                }]
+        );
+    }
+
+    const handleRedirect = (careerId: string) => {
+        // @ts-ignore
+        router.push(`/career-details/${careerId}`);
+    }
+
+    const handleCareerUpdated = () => {
+        loadCareers();
     }
 
     useEffect(() => {
@@ -77,6 +97,8 @@ const Careers = () => {
                 renderItem={({ item }) => (
                     <CareersCard
                         data={item}
+                        onPress={(career) => handleRedirect(career.id)}
+                        onLongPress={(career) => handleLongPress(career)}
                     />
                 )}
                 ListEmptyComponent={
@@ -85,8 +107,17 @@ const Careers = () => {
                         <Text className="mt-3 text-gray-500">No se encontraron carreras</Text>
                     </View>
                 }
-            >
-            </FlatList>
+            />
+            <EditCareerModal
+                visible={editModalVisible}
+                career={selectedCareer}
+                onClose={() => {
+                    setEditModalVisible(false);
+                    setSelectedCareer(null);
+                }}
+                onCareerUpdated={handleCareerUpdated}
+            />
+            <View style={{paddingBottom: 75}}></View>
         </View>
     )
 };

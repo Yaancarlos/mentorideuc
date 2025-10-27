@@ -43,7 +43,7 @@ export const DashboardHeader: React.FC<HeaderProps> = ({
             case 'student':
                 return <GraduationCap size={28} color="#3b82f6" />;
             default:
-                return <HatGlasses size={28} color=" #6b7280" />;
+                return <HatGlasses size={28} color="#6b7280" />;
         }
     };
 

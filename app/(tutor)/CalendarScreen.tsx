@@ -367,6 +367,7 @@ export default function MyCalendarScreen() {
                     showsVerticalScrollIndicator={false}
                 />
             </View>
+            <View style={{paddingBottom: 75}}></View>
         </View>
     )
 }

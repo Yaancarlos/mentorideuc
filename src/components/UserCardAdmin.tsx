@@ -74,7 +74,7 @@ const UserCard: React.FC<UserCardProps> = ({
     };
 
     const getCardStyle = () => {
-        const baseStyle = "bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-3";
+        const baseStyle = "bg-white p-4 rounded-lg border border-gray-200 mb-3";
 
         if (variant === 'compact') {
             return `${baseStyle} p-3`;

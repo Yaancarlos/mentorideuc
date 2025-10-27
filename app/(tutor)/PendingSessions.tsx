@@ -165,6 +165,7 @@ const PendingSessions = () => {
                     </View>
                 }
             />
+            <View style={{paddingBottom: 75}}></View>
         </View>
     );
 };

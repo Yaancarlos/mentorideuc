@@ -164,6 +164,7 @@ export default function SessionsListScreenTutor() {
                     </View>
                 }
             />
+            <View style={{paddingBottom: 75}}></View>
         </View>
     );
 }

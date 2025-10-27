@@ -115,6 +115,7 @@ export default function UsersAdmin() {
                     </View>
                 }
             />
+            <View style={{paddingBottom: 75}}></View>
         </View>
     )
 }

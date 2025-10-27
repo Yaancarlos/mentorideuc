@@ -33,11 +33,37 @@ export enum RepositoryStatus {
     REJECTED = 'rejected'
 }
 
+export interface CareerProps {
+    id: string,
+    name: string,
+    code: string,
+    faculty: string,
+    duration_semesters: number,
+    is_active: boolean,
+    created_at: string,
+    updated_at: string
+}
+
 export interface UserFormData {
     email: string;
     name: string;
     role: UserRole;
     password: string;
+    career_id?: string;
+}
+
+export interface DashboardStats {
+    totalUsers: number;
+    totalStudents: number;
+    totalTutors: number;
+    totalAdmins: number;
+    totalCareers: number;
+    totalSessions: number;
+    upcomingSessions: number;
+    completedSessions: number;
+    totalSubmissions: number;
+    pendingReviews: number;
+    activeEnrollments: number;
 }
 
 export interface CareerFormData {

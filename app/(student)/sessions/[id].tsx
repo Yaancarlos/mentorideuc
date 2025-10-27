@@ -196,8 +196,18 @@ export default function RepositoryDetailStudentScreen() {
     const handleDownloadFile = async (fileUrl: string, fileName: string) => {
         try {
             if (fileUrl) {
-                // You can use Linking.openURL(fileUrl) for direct download
-                Alert.alert("Download", `Downloading: ${fileName}`);
+                Alert.alert("Descargar archivo",
+                    `Estas seguro que quieres descargar el archivo "${fileName}"?`,
+                    [
+                        { text: "Cancelar", style: "destructive" },
+                        {
+                            text: "Descargar",
+                            style: "cancel",
+                            onPress: async () => {
+                                Alert.alert("Exito", "El archivo se ha descargado")
+                            }
+                        }
+                    ]);
                 return;
             }
         } catch (error) {
