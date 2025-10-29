@@ -73,3 +73,16 @@ export interface CareerFormData {
     duration_semesters: number;
     is_active: boolean;
 }
+
+export interface AddUserFormProps {
+    visible: boolean;
+    onClose: () => void;
+    onUserCreated: () => void;
+}
+
+export interface Career {
+    id: string;
+    name: string;
+    code: string;
+    faculty: string;
+}

@@ -163,6 +163,7 @@ export default function RepositoryDetailTutorScreen() {
                 uploadRepositoryFile(id as string, asset, profile?.id as string);
             })
 
+            Alert.alert("Exito", "El documento se ha subido correctamente");
             await loadRepositoryFiles();
         } catch (error:any) {
             console.error("Error loading repository:", error);

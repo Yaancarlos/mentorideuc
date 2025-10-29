@@ -1,30 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import {
-    View,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    Alert,
-    Modal,
-    ScrollView,
-    ActivityIndicator
-} from 'react-native';
+import {  View, Text, TextInput, TouchableOpacity, Alert, Modal, ScrollView, ActivityIndicator} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { UserFormData } from '@/src/types/auth';
 import { createUser, getActiveCareers } from '@/lib/api/admin';
-
-interface AddUserFormProps {
-    visible: boolean;
-    onClose: () => void;
-    onUserCreated: () => void;
-}
-
-interface Career {
-    id: string;
-    name: string;
-    code: string;
-    faculty: string;
-}
+import { AddUserFormProps, Career } from "@/src/types/auth";
 
 const AddUserForm: React.FC<AddUserFormProps> = ({ visible, onClose, onUserCreated }) => {
     const [formData, setFormData] = useState<UserFormData>({

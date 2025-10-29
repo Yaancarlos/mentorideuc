@@ -44,7 +44,7 @@ export default function UsersAdmin() {
 
     const handleLongPress = (item: any) => {
         Alert.alert(
-            "Opciones de Sesión",
+            "Opciones de Usuario",
             `¿Qué quieres hacer con "${item.name}"?`,
             [
                 { text: "Salir", style: "cancel" },

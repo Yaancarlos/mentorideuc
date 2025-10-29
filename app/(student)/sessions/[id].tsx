@@ -1,5 +1,14 @@
-import { useEffect, useState } from "react";
-import {View, Text, ActivityIndicator, Alert, ScrollView, TouchableOpacity, TextInput} from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+    View,
+    Text,
+    ActivityIndicator,
+    Alert,
+    ScrollView,
+    TouchableOpacity,
+    TextInput,
+    RefreshControl
+} from "react-native";
 import { useLocalSearchParams } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
 import { supabase } from "@/lib/supabase";
@@ -26,6 +35,14 @@ export default function RepositoryDetailStudentScreen() {
     const [feedBackUser, setFeedBackUser] = useState<string>("");
     const [files, setFiles] = useState<any[]>([]);
     const [uploading, setUploading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
+
+    const onRefresh = () => {
+        setRefreshing(true);
+        loadRepositoryFiles();
+        loadFeedback();
+        loadRepositoryFiles();
+    };
 
     useEffect(() => {
         if (id) {
@@ -67,6 +84,7 @@ export default function RepositoryDetailStudentScreen() {
             Alert.alert("Error", error.message || "Failed to load repository");
         } finally {
             setLoading(false);
+            setRefreshing(false);
         }
     }
 
@@ -106,6 +124,7 @@ export default function RepositoryDetailStudentScreen() {
             console.error("Error cargando feedback: ", error);
         } finally {
             setLoading(false);
+            setRefreshing(false);
         }
     }
 
@@ -138,6 +157,7 @@ export default function RepositoryDetailStudentScreen() {
             console.error("Error loading repository:", error);
         } finally {
             setLoading(false);
+            setRefreshing(false)
         }
     }
 
@@ -154,12 +174,11 @@ export default function RepositoryDetailStudentScreen() {
 
             if (result.canceled) return;
 
-            const uploadPromises = result.assets.map(asset => {
+            result.assets.map(asset => {
                 uploadRepositoryFile(id as string, asset, profile?.id as string);
             })
 
-            console.log(uploadPromises.length)
-
+            Alert.alert("Exito", "El documento se ha subido correctamente");
             await loadRepositoryFiles();
         } catch (error:any) {
             console.error("Error loading repository:", error);
@@ -248,14 +267,24 @@ export default function RepositoryDetailStudentScreen() {
         }
     }
 
-    if (loading) {
+    if (loading && !refreshing) {
         return (
             <Loading />
         );
     }
 
     return (
-        <ScrollView className="flex-1 pt-10 bg-white">
+        <ScrollView
+            className="flex-1 pt-10 bg-white"
+            refreshControl={
+                <RefreshControl
+                    refreshing={refreshing}
+                    onRefresh={onRefresh}
+                    colors={['#10B981']}
+                    tintColor={'#10B981'}
+                />
+            }
+        >
             <View className="px-6 py-8">
                 <Text className="text-2xl font-bold w-full text-center text-gray-900 mb-8">
                     {repository?.title || "Sin titulo"}
@@ -397,8 +426,6 @@ export default function RepositoryDetailStudentScreen() {
                         </View>
                     )}
                 </View>
-
-                {/*
                 <View className="w-full mt-12 flex-col gap-3">
                     <TouchableOpacity
                         className="bg-blue-50 p-4 rounded-lg"
@@ -412,7 +439,7 @@ export default function RepositoryDetailStudentScreen() {
                             </Text>
                         </View>
                     </TouchableOpacity>
-                </View>*/}
+                </View>
             </View>
         </ScrollView>
     );
