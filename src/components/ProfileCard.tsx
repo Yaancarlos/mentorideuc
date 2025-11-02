@@ -55,6 +55,11 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
         }
     }
 
+    const handleSessions = () => {
+        // @ts-ignore
+        router.push(`/(${item?.role})/sessions`);
+    }
+
     const handleClearCache = () => {
         if (onClearCache) onClearCache(item);
         else {
@@ -180,7 +185,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                         <>
                             <TouchableOpacity
                                 className="flex gap-3 justify-between flex-row"
-                                disabled={true}
+                                onPress={() => handleSessions()}
                             >
                                 <View className="flex flex-row gap-5 items-center">
                                     <Feather name="book-open" color="#111827" size={24} />
@@ -234,7 +239,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                         visible={showUserForm}
                         onClose={() => setShowUserForm(false)}
                         onUserCreated={() => {
-                            console.log('User created successfully');
+                            console.log('User created');
                         }}
                     />
 
@@ -242,7 +247,7 @@ const ProfileCard: React.FC<ProfileCardProps> = ({
                         visible={showCareerForm}
                         onClose={() => setShowCareerForm(false)}
                         onCareerCreated={() => {
-                            console.log('Career created successfully');
+                            console.log('Career created');
                         }}
                     />
                 </View>

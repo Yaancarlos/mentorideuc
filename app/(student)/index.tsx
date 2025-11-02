@@ -8,6 +8,8 @@ import Entypo from "@expo/vector-icons/Entypo";
 import {supabase} from "@/lib/supabase";
 import { useCurrentUser } from '@/lib/hooks';
 import Loading from "@/src/components/Loading";
+import {UserStats} from "@/src/types/auth";
+import {getStudentStats } from '@/lib/api/caledar';
 
 interface InfoCard {
     title: string;
@@ -19,6 +21,7 @@ interface InfoCard {
 export default function StudentDashboard() {
     const { profile } = useCurrentUser();
     const [loading, setLoading] = useState(true);
+    const [stats, setStats] = useState<UserStats | null>(null);
     const [repositories, setRepositories] = useState<any[]>([]);
 
 
@@ -30,6 +33,7 @@ export default function StudentDashboard() {
 
     async function loadRepositories() {
         try {
+            const studentStats = await getStudentStats(profile?.id as string);
             const { data: events, error: eventsError } = await supabase
                 .from("calendar_events")
                 .select(`
@@ -60,6 +64,7 @@ export default function StudentDashboard() {
             }));
 
             setRepositories(eventsWithRepos || []);
+            setStats(studentStats);
         } catch (error: any) {
             Alert.alert("Error", error.message);
         } finally {
@@ -80,32 +85,26 @@ export default function StudentDashboard() {
     }
 
 
-    const infoCards: InfoCard[] = [
+    const studentCards = stats ? [
         {
-            title: "Progreso",
-            value: "27%",
-            subtitle: "+6% este mes",
-            icon: "progress"
-        },
-        {
-            title: "Tutorias Programadas",
-            value: 3,
-            subtitle: "1 pendiente",
-            icon: "calendar"
+            title: "Tutorías Programadas",
+            value: stats.completedSessions || 0,
+            subtitle: "Reservadas",
+            icon: "calendar" as const
         },
         {
             title: "Tareas pendientes",
-            value: 2,
-            subtitle: "1 retrasada",
-            icon: "book"
+            value: stats.pendingSubmissions || 0,
+            subtitle: "",
+            icon: "book" as const
         },
         {
-            title: "Horas de estudio",
-            value: 7,
+            title: "Horas de tutoría",
+            value: stats.upcomingSessions || 0,
             subtitle: "+1 hora esta semana",
-            icon: "clock"
+            icon: "clock" as const
         }
-    ];
+    ] : [];
 
     return (
         <View className="flex-1 pt-12 bg-white">
@@ -115,7 +114,7 @@ export default function StudentDashboard() {
             />
             <ScrollView className="p-5">
                 <View>
-                    {infoCards.map((card, index) => (
+                    {studentCards.map((card, index) => (
                         <InfoCard
                             key={index}
                             title={card.title}

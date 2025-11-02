@@ -4,11 +4,11 @@ import {supabase} from "@/lib/supabase";
 import {useCurrentUser} from "@/lib/hooks";
 import Loading from "@/src/components/Loading";
 import {DashboardHeader} from "@/src/components/Header";
-import {router} from "expo-router";
+import { getTutorStats} from '@/lib/api/caledar';
 import SessionCard from "@/src/components/SessionCard";
 import Entypo from "@expo/vector-icons/Entypo";
 import {InfoCard} from "@/src/components/InfoCards";
-import {EventStatus} from "@/src/types/auth";
+import {EventStatus, UserStats} from "@/src/types/auth";
 import {formatDate, formatDateTime} from "@/src/utils/date";
 import {Ionicons} from "@expo/vector-icons";
 import {respondToBooking} from "@/lib/api/caledar";
@@ -24,6 +24,7 @@ export default function TutorDashboard() {
     const { profile } = useCurrentUser();
     const [pendingSessions, setPendingSessions] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
+    const [stats, setStats] = useState<UserStats | null>(null);
     const [repositories, setRepositories] = useState<any[]>([]);
     const [refreshing, setRefreshing] = useState(false);
 
@@ -44,6 +45,7 @@ export default function TutorDashboard() {
         try {
             setLoading(true);
 
+            const tutorStats = await getTutorStats(profile?.id as string);
             const { data: events, error: eventsError } = await supabase
                 .from("calendar_events")
                 .select(`
@@ -75,6 +77,8 @@ export default function TutorDashboard() {
             }));
 
             setRepositories(eventsWithRepos || []);
+            setStats(tutorStats);
+            console.warn(stats)
         } catch (error: any) {
             Alert.alert("Error", error.message);
         } finally {
@@ -141,26 +145,27 @@ export default function TutorDashboard() {
     }
 
 
-    const infoCards: InfoCard[] = [
+    const tutorCards = stats ? [
         {
-            title: "Tutorias Programadas",
-            value: 1,
+            title: "Tutorías Programadas",
+            value: stats.scheduledSessions || 0,
             subtitle: "Reservadas",
-            icon: "calendar"
+            icon: "calendar" as const
         },
         {
             title: "Estudiantes Activos",
-            value: 2,
+            value: stats.activeStudents || 0,
             subtitle: "",
-            icon: "book"
+            icon: "book" as const
         },
         {
-            title: "Horas de tutorias",
-            value: 2,
+            title: "Horas de tutoría",
+            value: stats.weeklyHours || 0,
             subtitle: "+1 hora esta semana",
-            icon: "clock"
+            icon: "clock" as const
         }
-    ];
+    ] : [];
+
 
     return (
         <View className="flex-1 pt-12 bg-white">
@@ -180,7 +185,7 @@ export default function TutorDashboard() {
                 }
             >
                 <View>
-                    {infoCards.map((card, index) => (
+                    {tutorCards.map((card, index) => (
                         <InfoCard
                             key={index}
                             title={card.title}

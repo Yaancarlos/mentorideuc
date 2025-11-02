@@ -84,12 +84,14 @@ export const DashboardHeader: React.FC<HeaderProps> = ({
                 </View>
             </View>
             <View className="flex-row items-center gap-3">
-                <TouchableOpacity className="relative w-12 h-12 bg-white border border-gray-300 rounded-full items-center justify-center">
-                    <Bell size={24} color="#374151" />
-                    <View className="absolute -top-1 -right-1 w-6 h-6 bg-red-500 rounded-full items-center justify-center">
-                        <Text className="text-white text-xs font-bold">2</Text>
-                    </View>
-                </TouchableOpacity>
+                {role === "tutor" && (
+                    <TouchableOpacity
+                        onPress={() => router.push(`/(tutor)/PendingSessions`)}
+                        className="relative w-12 h-12 bg-white border border-gray-300 rounded-full items-center justify-center"
+                    >
+                        <Bell size={24} color="#374151" />
+                    </TouchableOpacity>
+                )}
 
                 <TouchableOpacity
                     onPress={routerEdit}

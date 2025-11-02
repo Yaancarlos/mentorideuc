@@ -262,3 +262,84 @@ export async function getRepositoryFeedback(repositoryId: string) {
     if (error) throw error;
     return data;
 }
+
+export async function getTutorStats(tutorId: string) {
+    const { count: scheduledSessions, error: sessionsError } = await supabase
+        .from('calendar_events')
+        .select('*', { count: 'exact', head: true })
+        .eq('tutor_id', tutorId)
+        .eq('status', 'booked')
+
+    const { data: activeStudents, error: studentsError } = await supabase
+        .from('calendar_events')
+        .select('student_id')
+        .eq('tutor_id', tutorId)
+        .eq('status', 'booked')
+
+    const uniqueStudents = new Set(activeStudents?.map(s => s.student_id)).size;
+
+    const startOfWeek = new Date();
+    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const { data: thisWeekSessions, error: hoursError } = await supabase
+        .from('calendar_events')
+        .select('start_time, end_time')
+        .eq('tutor_id', tutorId)
+        .eq('status', 'booked')
+        .gte('start_time', startOfWeek.toISOString());
+
+    let weeklyHours = 0;
+    thisWeekSessions?.forEach(session => {
+        const start = new Date(session.start_time);
+        const end = new Date(session.end_time);
+        const hours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+        weeklyHours += hours;
+    });
+
+    return {
+        scheduledSessions: scheduledSessions || 0,
+        activeStudents: uniqueStudents || 0,
+        weeklyHours: Math.round(weeklyHours * 10) / 10,
+    };
+}
+
+export async function getStudentStats(studentId: string) {
+    const startOfWeek = new Date();
+    startOfWeek.setDate(startOfWeek.getDate() - startOfWeek.getDay());
+    startOfWeek.setHours(0, 0, 0, 0);
+
+    const { data: thisWeekSessions, error: hoursError } = await supabase
+        .from('calendar_events')
+        .select('start_time, end_time')
+        .eq('student_id', studentId)
+        .eq('status', 'booked')
+        .gte('start_time', startOfWeek.toISOString());
+
+    let weeklyHours = 0;
+    thisWeekSessions?.forEach(session => {
+        const start = new Date(session.start_time);
+        const end = new Date(session.end_time);
+        const hours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+        weeklyHours += hours;
+    });
+
+    const { count: completedSessions, error: completedError } = await supabase
+        .from('calendar_events')
+        .select('*', { count: 'exact', head: true })
+        .eq('student_id', studentId)
+        .eq('status', 'booked')
+        .lt('start_time', new Date().toISOString());
+
+    const { count: pendingSubmissions, error: submissionsError } = await supabase
+        .from('repository')
+        .select('*', { count: 'exact', head: true })
+        .eq('student_id', studentId)
+        .eq('status', 'submitted');
+
+    return {
+        upcomingSessions: Math.round(weeklyHours * 10) / 10,
+        completedSessions: completedSessions || 0,
+        pendingSubmissions: pendingSubmissions || 0,
+    };
+}

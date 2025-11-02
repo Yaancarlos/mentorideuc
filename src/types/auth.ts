@@ -44,6 +44,15 @@ export interface CareerProps {
     updated_at: string
 }
 
+export interface UserStats {
+    scheduledSessions?: number;
+    activeStudents?: number;
+    weeklyHours?: number;
+    upcomingSessions?: number;
+    completedSessions?: number;
+    pendingSubmissions?: number;
+}
+
 export interface UserFormData {
     email: string;
     name: string;
