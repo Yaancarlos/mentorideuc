@@ -20,11 +20,10 @@ import {
     uploadRepositoryFile
 } from "@/lib/api/caledar";
 import {useCurrentUser} from "@/lib/hooks";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import * as DocumentPicker from "expo-document-picker";
 import Loading from "@/src/components/Loading";
 import MessageSection from "@/src/components/Message";
+import { formatDate, formatDateTime } from "@/src/utils/date"
 
 export default function RepositoryDetailStudentScreen() {
     const { id } = useLocalSearchParams();
@@ -87,33 +86,6 @@ export default function RepositoryDetailStudentScreen() {
             setRefreshing(false);
         }
     }
-
-    const formatDate = (isoString: string) => {
-        if (!isoString) return null;
-
-        const date = new Date(isoString);
-        return date.toLocaleDateString('es-ES', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-        });
-    };
-
-    const formatTime = (startTime: string, endTime: string) => {
-        if (!endTime || !startTime) return null;
-
-        const start = new Date(startTime);
-        const end = new Date(endTime);
-        return `${start.toLocaleTimeString('es-ES', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-        })} - ${end.toLocaleTimeString('es-ES', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-        })}`;
-    };
 
     const loadFeedback = async () => {
         try {
@@ -191,20 +163,20 @@ export default function RepositoryDetailStudentScreen() {
 
     const handleDeleteFile = async (fileId: string, fileName: string) => {
         Alert.alert(
-            "Delete File",
-            `Are you sure you want to delete "${fileName}"?`,
+            "DEliminar archivo",
+            `Estas seguro que quieres eliminar el archivo "${fileName}"?`,
             [
-                { text: "Cancel", style: "cancel" },
+                { text: "Cancelar", style: "cancel" },
                 {
-                    text: "Delete",
+                    text: "Eliminar",
                     style: "destructive",
                     onPress: async () => {
                         try {
                             await deleteRepositoryFile(fileId);
                             await loadRepositoryFiles();
-                            Alert.alert("Success", "File deleted successfully");
+                            Alert.alert("Exito", "Archivo eliminado correctamente");
                         } catch (error: any) {
-                            Alert.alert("Error", error.message || "Failed to delete file");
+                            Alert.alert("Error", error.message || "El archivo no se pudo descargar");
                         }
                     }
                 }
@@ -230,7 +202,7 @@ export default function RepositoryDetailStudentScreen() {
                 return;
             }
         } catch (error) {
-            Alert.alert("Download Failed", "Could not download file");
+            Alert.alert("Descarga fallida", "No se pudo descargar el archivo");
         }
     };
 
@@ -254,18 +226,6 @@ export default function RepositoryDetailStudentScreen() {
         const i = Math.floor(Math.log(bytes) / Math.log(k));
         return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
     };
-
-
-    const getFeedbackIcon = (name: string) => {
-        switch (name) {
-            case "tutor":
-                return { icon: "user-secret", color: "#84abfc" }
-            case "student":
-                return { icon: "user-ninja", color: "#10B981" }
-            default:
-                return { icon: "user-injured", color: "#3B82F6" }
-        }
-    }
 
     if (loading && !refreshing) {
         return (
@@ -313,7 +273,7 @@ export default function RepositoryDetailStudentScreen() {
                     <View className="flex-row items-center gap-2">
                         <Ionicons name="time-outline" size={20} color="#6B7280" />
                         <Text className="text-base text-gray-600">
-                            {formatTime(repository?.booking.start_time, repository?.booking.end_time) || "No Date"}
+                            {formatDateTime(repository?.booking.start_time, repository?.booking.end_time) || "No Date"}
                         </Text>
                     </View>
                 </View>

@@ -17,6 +17,7 @@ export const formatDate = (dateString: string, includeYear: boolean = false): st
 };
 
 
+// 23:00
 export const formatDateTime = (startTime: string, endTime: string): string => {
     if (!startTime || !endTime) return "Sin horario";
 

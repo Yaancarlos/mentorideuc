@@ -33,17 +33,6 @@ const MessageSection: React.FC<MessageSectionProps> = ({
                                                            emptyIconSize = 24,
                                                            styles = {}
                                                        }) => {
-    const getFeedbackIcon = (type: string) => {
-        switch (type) {
-            case 'tutor':
-                return { icon: 'user-graduate' as const, color: '#3B82F6' };
-            case 'student':
-                return { icon: 'user' as const, color: '#10B981' };
-            default:
-                return { icon: 'user' as const, color: '#3B82F6' };
-        }
-    };
-
     const getMessageAlignment = (type: string) => {
         if (profile !== "tutor") {
             switch (type) {

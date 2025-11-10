@@ -16,6 +16,8 @@ import { supabase } from "@/lib/supabase";
 import { useCurrentUser } from "@/lib/hooks";
 import Loading from "@/src/components/Loading";
 import MessageSection from "@/src/components/Message";
+import { formatDate, formatDateTime } from "@/src/utils/date"
+
 
 export default function RepositoryDetailTutorScreen() {
     const { id } = useLocalSearchParams();
@@ -75,40 +77,13 @@ export default function RepositoryDetailTutorScreen() {
         }
     }
 
-    const formatDate = (iString: string) => {
-        if (!iString) return null;
-
-        const date = new Date(iString);
-        return date.toLocaleDateString('es-ES', {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-        });
-    };
-
-    const formatTime = (startTime: string, endTime: string) => {
-        if (!endTime || !startTime) return null;
-
-        const start = new Date(startTime);
-        const end = new Date(endTime);
-        return `${start.toLocaleTimeString('es-ES', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-        })} - ${end.toLocaleTimeString('es-ES', {
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-        })}`;
-    };
-
     const loadRepositoryFiles = async () => {
         try {
             setLoading(true);
             const filesData = await getRepositoryFiles(id as string);
             setFiles(filesData || []);
         } catch (error: any) {
-            console.error("Error loading repository:", error);
+            console.error("Error cargando el repositorio:", error);
         } finally {
             setLoading(false);
             setRefreshing(false);
@@ -167,7 +142,7 @@ export default function RepositoryDetailTutorScreen() {
             await loadRepositoryFiles();
         } catch (error:any) {
             console.error("Error loading repository:", error);
-            Alert.alert("Error", error.message || "Failed to load files");
+            Alert.alert("Error", error.message || "Fallo la carrga de archivos");
         } finally {
             setUploading(false);
             setLoading(false);
@@ -215,20 +190,9 @@ export default function RepositoryDetailTutorScreen() {
                 return;
             }
         } catch (error) {
-            Alert.alert("Download Failed", "Could not download file");
+            Alert.alert("Descarga fallo", "No se pudo descargar el archivo");
         }
     };
-
-    const getFeedbackIcon = (name: string) => {
-        switch (name) {
-            case "tutor":
-                return { icon: "user-secret", color: "#84abfc" }
-            case "student":
-                return { icon: "user-ninja", color: "#10B981" }
-            default:
-                return { icon: "user-injured", color: "#3B82F6" }
-        }
-    }
 
     const getFileIcon = (fileType: string) => {
         if (fileType.includes("pdf")) return { icon: "document-text", color: "#EF4444" };
@@ -289,7 +253,7 @@ export default function RepositoryDetailTutorScreen() {
                     <View className="flex-row items-center gap-2">
                         <Ionicons name="time-outline" size={20} color="#6B7280" />
                         <Text className="text-base text-gray-600">
-                            {formatTime(repository?.calendar?.start_time, repository?.calendar?.end_time) || "No Date"}
+                            {formatDateTime(repository?.calendar?.start_time, repository?.calendar?.end_time) || "No Date"}
                         </Text>
                     </View>
                 </View>
